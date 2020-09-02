@@ -16,9 +16,8 @@ def get_process_by_name(name):
                 return p
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-def get_screenshot(windowname):
-    hwnd = win32gui.FindWindow(None, windowname)
-    print(windowname)
+def get_screenshot(hwnd):
+    # hwnd = win32gui.FindWindow(None, windowname)
     # Change the line below depending on whether you want the whole window
     # or just the client area.
     # left, top, right, bot = win32gui.GetClientRect(hwnd)

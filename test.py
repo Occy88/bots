@@ -1,29 +1,47 @@
 from utils import get_process_by_name
+from Win32Wrapper import Win32Wrapper
 import psutil
-import subprocess
-import pyautogui
-import pygetwindow
-HADES_STAR_PROGRAM_NAME = 'hadesstar.exe'
 
-def get_app(app_name):
-    app = get_process_by_name(app_name)
-    if not type(app) == psutil.Process:
-        print("NO APP IDENTIFIED")
-        exit(0)
-    else:
-        "APP FOUND"
-        return app
+PROGRAM_NAME = 'hadesstar.exe'
+WINDOW_TITLE = "Hades' Star"
+test = 'Device Manager'
 
 
-app = get_app(HADES_STAR_PROGRAM_NAME)
-while app.is_running():
-    print(dir(pyautogui))
-    windows=pyautogui.getAllWindows
-    for w in windows:
-        print(dir(w))
-    files = app.open_files()
-    print(len(files))
-    for f in files:
-        print(f.path)
-    print(dir(app))
-    break
+class ProgramController:
+    def __init__(self, program_name, window_title, window_id):
+        try:
+            self.program = self.get_program(program_name)
+            print('initiating win rapper')
+            self.window = Win32Wrapper(window_title)
+            self.options = {
+                '0': ('quit', lambda: None),
+                '1': ('start preview', self.window.video),
+
+            }
+            self.run()
+        except Exception as e:
+            print(e)
+
+    def run(self):
+        while True:
+            val = self.control()
+            if val == self.options['0']:
+                break
+
+    def control(self):
+        for key, val in self.options.items():
+            print(key, val)
+        command = input('Please choose option: ')
+        if command in self.options:
+            self.options[command][1]()
+        else:
+            print("you chose an invalid option.")
+
+    def get_program(self, program_name):
+        program = get_process_by_name(program_name)
+        if not type(program) == psutil.Process:
+            raise Exception("Program not found")
+        else:
+            print("program FOUND")
+            return program
+ProgramController(PROGRAM_NAME,WINDOW_TITLE,0)

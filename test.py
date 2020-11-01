@@ -1,6 +1,6 @@
 from utils import get_process_by_name
 try:
-    from Win32Wrapper import Win32Wrapper
+    from Win32Wrapper import Win32Wrapper as window
 except Exception as e:
     print("not windows.")
 import psutil
@@ -15,7 +15,7 @@ class ProgramController:
         try:
             self.program = self.get_program(program_name)
             print('initiating win rapper')
-            self.window = Win32Wrapper(window_title)
+            self.window = window(window_title)
             self.options = {
                 '0': ('quit', lambda: None),
                 '1': ('start preview', self.window.video),

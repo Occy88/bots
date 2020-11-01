@@ -10,7 +10,7 @@ from time import time
 import threading
 
 
-class Win32Wrapper(WindowInterface):
+class LinuxWinWrapper(WindowInterface):
     def __init__(self, window_title):
         WindowInterface.__init__(self,window_title)
         self.win_32_window = win32gui.FindWindow(None, window_title)

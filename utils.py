@@ -1,8 +1,12 @@
 import numpy as np
 import psutil
-import win32gui
-import win32ui
-from ctypes import windll
+try:
+    from ctypes import windll
+
+    import win32gui
+    import win32ui
+except Exception as e:
+    print("now windows :(")
 
 
 def get_process_by_name(name):

@@ -1,9 +1,12 @@
 from utils import get_process_by_name
-from Win32Wrapper import Win32Wrapper
+try:
+    from Win32Wrapper import Win32Wrapper
+except Exception as e:
+    print("not windows.")
 import psutil
 
-PROGRAM_NAME = 'hadesstar.exe'
-WINDOW_TITLE = "Hades' Star"
+PROGRAM_NAME = 'scrcpy'
+WINDOW_TITLE = "SM-G9650"
 test = 'Device Manager'
 
 
@@ -44,4 +47,6 @@ class ProgramController:
         else:
             print("program FOUND")
             return program
+
+
 ProgramController(PROGRAM_NAME,WINDOW_TITLE,0)

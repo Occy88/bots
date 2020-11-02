@@ -1,4 +1,3 @@
-from utils import get_screenshot
 import numpy as np
 import win32gui
 import win32ui
@@ -12,7 +11,7 @@ import threading
 
 class Win32Wrapper(WindowInterface):
     def __init__(self, window_title):
-        WindowInterface.__init__(self,window_title)
+        WindowInterface.__init__(self, window_title)
         self.win_32_window = win32gui.FindWindow(None, window_title)
         self.update_properties()
         print('properties updated, starting thread')
@@ -24,7 +23,12 @@ class Win32Wrapper(WindowInterface):
         self.height = self.bottom - self.top
         self.width = self.right - self.left
         print(self.width, self.height)
-        cv2.namedWindow('preview')
+    def get_mouse_pos(self):
+        x,y=win32gui.GetCursorPos()
+        print(self.left,self.right,self.bottom,self.top)
+        x-=self.left
+        y-=self.top
+        return x,y
 
     def prepare_screenshot(self):
         self.wDC = win32gui.GetWindowDC(self.win_32_window)
@@ -75,7 +79,7 @@ class Win32Wrapper(WindowInterface):
         win32gui.DeleteObject(self.saveBitMap.GetHandle())
 
     def screenshot(self):
-        img = get_screenshot(self.win_32_window)
+        img = self.capture_screenshot()
         self.show_image('preview', img)
 
     def kill_all_windows(self):

@@ -1,4 +1,3 @@
-from utils import get_screenshot
 import numpy as np
 import win32gui
 import win32ui
@@ -74,9 +73,6 @@ class LinuxWinWrapper(WindowInterface):
         win32gui.ReleaseDC(self.win_32_window, self.wDC)
         win32gui.DeleteObject(self.saveBitMap.GetHandle())
 
-    def screenshot(self):
-        img = get_screenshot(self.win_32_window)
-        self.show_image('preview', img)
 
     def kill_all_windows(self):
         cv2.destroyAllWindows()

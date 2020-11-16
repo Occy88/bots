@@ -15,7 +15,7 @@ class MLPictureGen():
         def capture(e: KeyboardEvent):
             if e.name == key:
                 x, y = self.app.window.get_mouse_pos()
-                img = self.app.window.capture_screenshot()
+                img = self.app.window.get_latest_screenshot()
                 img = crop_center(img, x, y, width, height)
                 save_img(img, name + '_' + str(uuid.uuid4()) + '.jpg')
 

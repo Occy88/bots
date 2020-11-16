@@ -1,13 +1,13 @@
 
 import threading
 class WindowInterface:
-    def __init__(self, window_title):
+    def __init__(self):
         pass
     def show_image(self, screen_name, image):
         pass
     def video(self):
         pass
-    def capture_screenshot(self):
+    def get_latest_screenshot(self):
         pass
     def show_screenshot(self):
         pass

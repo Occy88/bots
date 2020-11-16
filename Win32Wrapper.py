@@ -59,10 +59,10 @@ class Win32Wrapper(WindowInterface):
                 t = time()
 
             f += 1
-            cv2.imshow('preview', self.capture_screenshot())
+            cv2.imshow('preview', self.get_latest_screenshot())
         self.release()
 
-    def capture_screenshot(self):
+    def get_latest_screenshot(self):
         result = windll.user32.PrintWindow(self.win_32_window, self.cDC.GetSafeHdc(), 0)
         signedIntsArray = self.saveBitMap.GetBitmapBits(True)
         img = np.fromstring(signedIntsArray, dtype='uint8')
@@ -79,7 +79,7 @@ class Win32Wrapper(WindowInterface):
         win32gui.DeleteObject(self.saveBitMap.GetHandle())
 
     def screenshot(self):
-        img = self.capture_screenshot()
+        img = self.get_latest_screenshot()
         self.show_image('preview', img)
 
     def kill_all_windows(self):

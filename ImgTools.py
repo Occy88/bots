@@ -1,18 +1,18 @@
 # Purpose of this file is to manage a screenshot that has been taken,
 # make it easy to get a section of the specified section of the screenshot etc...
-import cv2
-import sys
 import os
-import win32gui
-import win32ui
-import win32con
-import win32api
-from Win32Wrapper import Win32Wrapper
-import cv2 as cv
-import numpy as np
-from matplotlib import pyplot as plt
+import sys
 
-IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
+import cv2
+import cv2 as cv
+import matplotlib.pyplot as plt
+import numpy as np
+
+if sys.platform == 'win32':
+    IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
+
+else:
+    IMG_ROOT = os.getcwd() + '/'
 
 
 def crop_img(img, x, y, w, h):
@@ -31,6 +31,8 @@ def crop_img_percent(img, x, y, w, h):
 
 
 def save_img(img, name):
+    print("SAVING UNDER: ", IMG_ROOT + name)
+
     cv2.imwrite(IMG_ROOT + name, img, )
 
 
@@ -40,10 +42,10 @@ def load_img(name):
     return cv2.imread(IMG_ROOT + name)
 
 
-def get_cursor_location():
-    flags, hcursor, (x, y) = win32gui.GetCursorInfo()
-
-    return win32api.GetCursorPos()
+def show_img(img):
+    print("SHOWING IMAGE")
+    plt.imshow(img)
+    plt.show()
 
 
 def crop_center(img, x, y, width, height):
@@ -59,7 +61,7 @@ def template_match(template, test_img_path):
     img = img2.copy()
     method = cv.TM_CCOEFF
     # Apply template Matching
-    res = cv.matchTemplate(img2,template,cv.TM_CCOEFF_NORMED)
+    res = cv.matchTemplate(img2, template, cv.TM_CCOEFF_NORMED)
     threshold = 0.8
     loc = np.where(res >= threshold)
     return res

@@ -1,22 +1,26 @@
 from utils import get_process_by_name
-from Win32Wrapper import Win32Wrapper as window
+
+try:
+    from Win32Wrapper import Win32Wrapper as program
+except Exception as e:
+    print("NOT WINDOWS, ASSUMING ADB.")
+    from AdbWrapper import АdbWrapper as program
 import psutil
+
 PROGRAM_NAME = 'scrcpy.exe'
-WINDOW_TITLE = "SM-G9650"
+program_TITLE = "SM-G9650"
 test = 'Device Manager'
 
 
 class ProgramController:
-    def __init__(self, program_name, window_title, window_id):
-        self.program = self.get_program(program_name)
-        print('initiating win rapper')
-        self.window = window(window_title)
+    def __init__(self, program_title):
+        print('initiating program')
+        self.program = program(program_title)
         self.options = {
             '0': ('quit', lambda: None),
-            '1': ('start preview', self.window.video),
+            '1': ('start preview', self.program.start_capture),
 
         }
-
 
     def run(self):
         while True:
@@ -39,4 +43,4 @@ class ProgramController:
             print("program FOUND")
             return program
 
-# ProgramController(PROGRAM_NAME,WINDOW_TITLE,0)
+# ProgramController(PROGRAM_NAME,program_TITLE,0)

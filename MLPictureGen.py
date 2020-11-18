@@ -7,11 +7,11 @@ except:
 from keyboard import KeyboardEvent
 
 from ImgTools import crop_center, save_img
-from ProgramCotntroller import ProgramController
+from ProgramController import ProgramController
 
 
 class MLPictureGen():
-    def __init__(self, program_name):
+    def __iclean_imgnit__(self, program_name):
         self.app = ProgramController(program_name)
         self.width = 100
         self.height = 100

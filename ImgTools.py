@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
-
+import scipy
 if sys.platform == 'win32':
     IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
 
@@ -135,20 +135,18 @@ def find_peaks(p_2d_arr, threshold):
     # by removing the background from the local_max mask (xor operation)
     detected_peaks = local_max ^ eroded_background
 
-    return detected_peaks
+    return scipy.ndimage.measurements.label(detected_peaks)
 
 
-def template_match(template, test_img_path):
-    img2 = template
-    template = load_img(test_img_path)
-    w2, h2 = img2.shape[0], img2.shape[1]
-    w, h = template.shape[0], template.shape[1]
+def template_match(small_img, large_img):
+    w2, h2 = large_img.shape[0], large_img.shape[1]
+    w, h = small_img.shape[0], small_img.shape[1]
 
-    img = img2.copy()
+    img = small_img.copy()
     method = cv.TM_CCOEFF
     # Apply template Matching
 
-    res = cv.matchTemplate(img2, template, cv.TM_CCOEFF_NORMED)
+    res = cv.matchTemplate(small_img, large_img, cv.TM_CCOEFF_NORMED)
     threshold = 0.8
     loc = np.where(res >= threshold)
     return res
@@ -166,3 +164,30 @@ def template_match(template, test_img_path):
     # plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
     # plt.show()
     # return min_val, max_val, np.array(max_loc) + np.array((w2 / 2, h2 / 2))
+
+
+class TfImageFinder:
+    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):
+        """
+
+        :param model:
+        :param preprocessor:
+        :param match_np_dim:
+        :param divisor:
+        :param threshold:
+        """
+        self.preprocessor = preprocessor
+        self.model = model
+        self.match_np_dim = match_np_dim
+        self.divisor = divisor
+        self.threshold = threshold
+
+    def find_locations(self, test_img):
+        pict = template_match_tfmodel(test_img, self.match_np_dim, self.preprocessor, self.model.predict, *self.divisor)
+        pict_peaks = find_peaks(pict, self.threshold)
+        return pict, pict_peaks
+
+
+
+def find_image_locations(model, test_img, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):
+    pass

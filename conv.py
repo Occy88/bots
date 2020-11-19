@@ -6,7 +6,6 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers, models
 
-from DetectPokestop import clean_img
 from ImgTools import load_dir, resize_images
 
 
@@ -91,30 +90,6 @@ def train_model(detect_images, ignore_images, img_np_dim, preprocess_function, m
     return train_images(x, y, conv2d_32_32_3_model(), model_save_path)
 
 
-def train_pogo_model():
-    return train_model('images/Pokestop/*',
-                       'images/Nothing/*',
-                       (100, 150, 3),
-                       lambda X: preprocess_images(X, (32, 32, 3), clean_img),
-                       'models/PokestopDetect')
 
 
-def test_find_img(kx, ky,thresh):
-    model = tf.keras.models.load_model('models/PokestopDetect')
-    from ImgTools import template_match_tfmodel, load_img, show_img, crop_img_percent, find_peaks
-    import cv2
-    template = crop_img_percent(load_img('pokestop_detect1.png'), 0, 0, 1, 1)
-    print(template)
-    cv2.imshow('preview', template)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    print('template:', template.shape)
 
-    def preprocess_for_pokestop(X):
-        return preprocess_images(X, (32, 32, 3))
-
-    pict = template_match_tfmodel(template, (100, 150, 3), preprocess_for_pokestop, model.predict, kx, ky)
-    pict_peaks = find_peaks(pict, thresh)
-    show_img(pict)
-    show_img(pict_peaks)
-    return pict

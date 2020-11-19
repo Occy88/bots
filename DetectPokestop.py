@@ -1,6 +1,16 @@
 import cv2
 import numpy as np
 
+from ImgTools import TfImageFinder
+from conv import load_model
+from conv import preprocess_images
+
+POKESTOP_MODEL_PATH = 'models/PokestopDetect'
+POKESTOP_IMAGES = 'images/Pokestop/*'
+NOT_POKESTOP_IMAGES = 'images/Nothing/*'
+POKESTOP_IMG_DIM = (100, 150, 3)
+POKESTOP_RESIZE_DIM = (32, 32, 3)
+
 
 def clean_img(img_list):
     """
@@ -26,3 +36,12 @@ def clean_img(img_list):
         # so when multiplied with original image removes all non-blue regions
         img_list[i] = cv2.bitwise_and(img, img, mask=mask)
     return img_list
+
+
+def preprocessor(X):
+    return preprocess_images(X, (32, 32, 3), clean_img)
+
+
+def get_detector():
+    return TfImageFinder(
+        load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM)

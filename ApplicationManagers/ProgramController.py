@@ -1,10 +1,10 @@
-from utils import get_process_by_name
+from ApplicationManagers.utils import get_process_by_name
 
 try:
-    from Win32Wrapper import Win32Wrapper as program
+    from ApplicationManagers.Win32Wrapper import Win32Wrapper as program
 except Exception as e:
     print("NOT WINDOWS, ASSUMING ADB.")
-    from AdbWrapper import АdbWrapper as program
+    from ApplicationManagers.AdbWrapper import АdbWrapper as program
 import psutil
 
 PROGRAM_NAME = 'scrcpy.exe'

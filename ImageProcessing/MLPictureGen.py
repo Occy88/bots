@@ -6,8 +6,8 @@ except:
     print("keyboard module not loaded")
 from keyboard import KeyboardEvent
 
-from ImgTools import crop_center, save_img
-from ProgramController import ProgramController
+from ImageProcessing.ImgTools import crop_center, save_img
+from ApplicationManagers.ProgramController import ProgramController
 
 
 class MLPictureGen():

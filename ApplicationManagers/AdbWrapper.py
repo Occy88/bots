@@ -3,8 +3,8 @@ import time
 
 import cv2
 
-from WindowInterface import WindowInterface
-from viewer import AndroidViewer
+from ApplicationManagers.WindowInterface import WindowInterface
+from ApplicationManagers.viewer import AndroidViewer
 
 
 class АdbWrapper(WindowInterface):

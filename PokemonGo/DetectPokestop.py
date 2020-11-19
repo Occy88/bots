@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
 
-from ImgTools import TfImageFinder
-from conv import load_model
-from conv import preprocess_images
+from ImageProcessing.ImgTools import TfImageFinder
+from ImageProcessing.conv import load_model
+from ImageProcessing.conv import preprocess_images
 
-POKESTOP_MODEL_PATH = 'models/PokestopDetect'
+POKESTOP_MODEL_PATH = '../models/PokestopDetect'
 POKESTOP_IMAGES = 'images/Pokestop/*'
 NOT_POKESTOP_IMAGES = 'images/Nothing/*'
 POKESTOP_IMG_DIM = (100, 150, 3)

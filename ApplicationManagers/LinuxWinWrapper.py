@@ -1,18 +1,15 @@
-from ctypes import windll
-from time import time
-
-import cv2
 import numpy as np
 import win32gui
 import win32ui
-import win32con
-import win32api
-from WindowInterface import WindowInterface
+from ctypes import windll
+from ApplicationManagers.WindowInterface import WindowInterface
+import cv2
+from time import time
 
 
-class Win32Wrapper(WindowInterface):
+class LinuxWinWrapper(WindowInterface):
     def __init__(self, window_title):
-        WindowInterface.__init__(self, window_title)
+        WindowInterface.__init__(self,window_title)
         self.win_32_window = win32gui.FindWindow(None, window_title)
         self.update_properties()
         print('properties updated, starting thread')
@@ -24,17 +21,7 @@ class Win32Wrapper(WindowInterface):
         self.height = self.bottom - self.top
         self.width = self.right - self.left
         print(self.width, self.height)
-
-    def get_mouse_pos(self):
-        x, y = win32gui.GetCursorPos()
-        print(self.left, self.right, self.bottom, self.top)
-        x -= self.left
-        y -= self.top
-        return x, y
-
-    def get_cursor_location():
-        flags, hcursor, (x, y) = win32gui.GetCursorInfo()
-        return win32api.GetCursorPos()
+        cv2.namedWindow('preview')
 
     def prepare_screenshot(self):
         self.wDC = win32gui.GetWindowDC(self.win_32_window)
@@ -50,7 +37,7 @@ class Win32Wrapper(WindowInterface):
         if cv2.waitKey(1) == ord('q'):
             cv2.destroyAllWindows()
 
-    def start_capture(self):
+    def video(self):
         self.prepare_screenshot()
 
         t = time()
@@ -84,9 +71,6 @@ class Win32Wrapper(WindowInterface):
         win32gui.ReleaseDC(self.win_32_window, self.wDC)
         win32gui.DeleteObject(self.saveBitMap.GetHandle())
 
-    def screenshot(self):
-        img = self.get_latest_screenshot()
-        self.show_image('preview', img)
 
     def kill_all_windows(self):
         cv2.destroyAllWindows()

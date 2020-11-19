@@ -1,8 +1,7 @@
-from ImgTools import crop_img_percent
-from ImgTools import template_match
+from ImageProcessing.ImgTools import crop_img_percent
+from ImageProcessing.ImgTools import template_match
 from Navigation.configs import QUEST_BUTTON_LOCATION as qb
 from Navigation.configs import HOME_BUTTON_LOCATION as hb
-import cv2
 
 
 def test_home(img):

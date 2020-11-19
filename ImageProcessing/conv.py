@@ -6,7 +6,7 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers, models
 
-from ImgTools import load_dir, resize_images
+from ImageProcessing.ImgTools import load_dir, resize_images
 
 
 def setup_dataset(im_valid, im_invalid, np_img_dim):

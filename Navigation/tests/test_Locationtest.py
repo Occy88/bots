@@ -1,4 +1,4 @@
-from ProgramController import ProgramController
+from ApplicationManagers.ProgramController import ProgramController
 
 p = ProgramController('scrcpy.exe', 'SM-G9650', 0)
 p.window.prepare_screenshot()

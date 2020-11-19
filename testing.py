@@ -1,7 +1,7 @@
 import time
 
-from ImgTools import crop_img_percent, save_img, show_img
-from ProgramController import *
+from ImageProcessing.ImgTools import crop_img_percent, save_img, show_img
+from ApplicationManagers.ProgramController import *
 
 WINDOW_TITLE = ''
 p = ProgramController(WINDOW_TITLE)
@@ -11,7 +11,7 @@ s = p.program.get_latest_screenshot()
 
 # print(s)
 s = crop_img_percent(s, 0, .3, 1, .5)
-from DetectPokestop import clean_img
+from PokemonGo.DetectPokestop import clean_img
 
 s = clean_img([s])[0]
 show_img(s)

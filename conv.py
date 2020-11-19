@@ -79,42 +79,42 @@ def train_images(X, Y, model, save_path):
     return model
 
 
-def test_model():
-    x, y = setup_dataset('images/Pokestop/*', 'images/Nothing/*', (100, 150, 3))
-    print("DATASET SETUP FINISHED PREPRECESSING")
+def train_model(detect_images, ignore_images, img_np_dim, preprocess_function, model_save_path):
+    x, y = setup_dataset(detect_images, ignore_images, img_np_dim)
+    print("DATASET LOADED")
     print(x.shape)
-    x = preprocess_images(x, (32, 32, 3), clean_img)
-    print("PREPROCESS FINISHED")
+    print('PREPROCESSING')
+    x = preprocess_function(x)
+    print("PREPROCESSING FINISHED")
     print(x.shape)
+    print('TRAINING')
+    return train_images(x, y, conv2d_32_32_3_model(), model_save_path)
 
-    return train_images(x, y, conv2d_32_32_3_model(), 'models/PokestopDetect')
+
+def train_pogo_model():
+    return train_model('images/Pokestop/*',
+                       'images/Nothing/*',
+                       (100, 150, 3),
+                       lambda X: preprocess_images(X, (32, 32, 3), clean_img),
+                       'models/PokestopDetect')
 
 
-def test_find_img(kx, ky):
+def test_find_img(kx, ky,thresh):
     model = tf.keras.models.load_model('models/PokestopDetect')
-    from ImgTools import template_match_tfmodel, load_img, show_img, crop_img_percent
+    from ImgTools import template_match_tfmodel, load_img, show_img, crop_img_percent, find_peaks
     import cv2
-    template = crop_img_percent(load_img('pokestop_detect1.png'), 0,0,1,1)
+    template = crop_img_percent(load_img('pokestop_detect1.png'), 0, 0, 1, 1)
     print(template)
     cv2.imshow('preview', template)
     cv2.waitKey(0)
-    cv2.destroyAllWindows
+    cv2.destroyAllWindows()
     print('template:', template.shape)
 
     def preprocess_for_pokestop(X):
         return preprocess_images(X, (32, 32, 3))
 
-    pr, p, dim = template_match_tfmodel(template, (100, 150, 3), preprocess_for_pokestop, model.predict, kx, ky)
-    pict = np.zeros(dim)
-    print('p shape', p.shape)
-    print('p zero', p[0])
-    for i, val in enumerate(pr):
-        y, x = p[i]
-        if (np.argmax(val) == 0):
-            pict[y][x] = np.max(val)
-        else:
-            pict[y][x] = np.max(val)
-    pict += np.min(pict)
-    pict *= (1 / np.max(pict))
+    pict = template_match_tfmodel(template, (100, 150, 3), preprocess_for_pokestop, model.predict, kx, ky)
+    pict_peaks = find_peaks(pict, thresh)
     show_img(pict)
+    show_img(pict_peaks)
     return pict

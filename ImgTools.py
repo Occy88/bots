@@ -9,6 +9,8 @@ import cv2
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.ndimage.filters import maximum_filter
+from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 
 if sys.platform == 'win32':
     IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
@@ -89,8 +91,51 @@ def template_match_tfmodel(template, test_dim_np, preproces_func, predict_func, 
 
     X = preproces_func(X)
     probs = predict_func(X)
+    pict = np.zeros((max_y, max_x))
+    for i, val in enumerate(probs):
+        y, x = p[i]
+        if (np.argmax(val) == 0):
+            pict[y][x] = np.max(val)
+        else:
+            pict[y][x] = np.max(val)
+    pict += np.min(pict)
+    pict *= (1 / np.max(pict))
+    return pict
 
-    return probs, p, (max_y, max_x)
+
+def find_peaks(p_2d_arr, threshold):
+    """
+    Finds all the maximas which are above a threshold on a 2d probability plane.
+    :param p_2d_arr:
+    :param threshold:
+    :return:
+    """
+    # make zero anything bellow threshold.
+    p_2d_arr[p_2d_arr < threshold] = 0
+
+    # define an 8-connected neighborhood
+    neighborhood = generate_binary_structure(2, 2)
+
+    # apply the local maximum filter; all pixel of maximal value
+    # in their neighborhood are set to 1
+    local_max = maximum_filter(p_2d_arr, footprint=neighborhood) == p_2d_arr
+    # local_max is a mask that contains the peaks we are
+    # looking for, but also the background.
+    # In order to isolate the peaks we must remove the background from the mask.
+
+    # we create the mask of the background
+    background = (p_2d_arr == 0)
+
+    # a little technicality: we must erode the background in order to
+    # successfully subtract it form local_max, otherwise a line will
+    # appear along the background border (artifact of the local maximum filter)
+    eroded_background = binary_erosion(background, structure=neighborhood, border_value=1)
+
+    # we obtain the final mask, containing only peaks,
+    # by removing the background from the local_max mask (xor operation)
+    detected_peaks = local_max ^ eroded_background
+
+    return detected_peaks
 
 
 def template_match(template, test_img_path):

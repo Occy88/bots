@@ -12,6 +12,9 @@ import numpy as np
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 import scipy
+import uuid
+import json
+
 if sys.platform == 'win32':
     IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
 
@@ -34,8 +37,21 @@ def crop_img_percent(img, x, y, w, h):
     return crop_img(img, p_x, p_y, p_w, p_h)
 
 
-def save_img(img, name):
-    cv2.imwrite(IMG_ROOT + name, img, )
+def save_img(img, name, with_uuid=False, format='.png', path='images/'):
+    """
+
+    :param img:
+    :param name:
+    :param with_uuid:
+    :return:
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if with_uuid:
+        name += '_' + uuid.uuid4().__str__()
+    name += format
+
+    cv2.imwrite(IMG_ROOT + path + name, img, )
 
 
 def load_img(name):
@@ -103,6 +119,19 @@ def template_match_tfmodel(template, test_dim_np, preproces_func, predict_func, 
     return pict
 
 
+def img_col_similarity(img1, img2):
+    """
+    returns similarity of two image by color:
+    summ diff/total
+    :param img1:
+    :param img2:
+    :return:
+    """
+    delta = np.sum(np.abs(img1 - img2))
+    tot = 255 * np.prod(img1.shape)
+    return delta / tot
+
+
 def find_peaks(p_2d_arr, threshold):
     """
     Finds all the maximas which are above a threshold on a 2d probability plane.
@@ -166,6 +195,31 @@ def template_match(small_img, large_img):
     # return min_val, max_val, np.array(max_loc) + np.array((w2 / 2, h2 / 2))
 
 
+class Image:
+    """
+    Image in this project is an image of some fictional/actual larger image
+    we specify it's crop function (x,y,w,h) as a percentage of the larger image so it can b cropped out.
+    The above is as a percentage
+
+    The image has an associated json file to which the state is saved and loaded from.
+
+    """
+
+    def __init__(self, crop_percent_dim=(0, 0, 1, 1), img=np.array([]), name='default', img_path='images/'):
+        self.name = name
+        self.img_path = img_path
+        self.img = img
+        self.crop_percent_dim = crop_percent_dim
+        self.js_name = name
+
+    def to_json(self):
+        return json.dumps(self.__dict__)
+
+    @staticmethod
+    def load(js):
+        return Image(**js)
+
+
 class TfImageFinder:
     def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):
         """
@@ -186,7 +240,6 @@ class TfImageFinder:
         pict = template_match_tfmodel(test_img, self.match_np_dim, self.preprocessor, self.model.predict, *self.divisor)
         pict_peaks = find_peaks(pict, self.threshold)
         return pict, pict_peaks
-
 
 
 def find_image_locations(model, test_img, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):

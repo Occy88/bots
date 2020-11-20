@@ -24,12 +24,15 @@ class Win32Wrapper(WindowInterface):
         self.width = self.right - self.left
         print(self.width, self.height)
 
+    def get_window_dim(self):
+        return np.array([self.width, self.height])
+
     def get_mouse_pos(self):
         x, y = win32gui.GetCursorPos()
         print(self.left, self.right, self.bottom, self.top)
         x -= self.left
         y -= self.top
-        return x, y
+        return np.array([x, y])
 
     def get_cursor_location():
         flags, hcursor, (x, y) = win32gui.GetCursorInfo()

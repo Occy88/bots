@@ -6,7 +6,7 @@ from ImageProcessing.conv import load_model
 from ImageProcessing.conv import preprocess_images
 from PokemonGo.PokestopState import PokestopState
 
-POKESTOP_MODEL_PATH = '../models/PokestopDetect'
+POKESTOP_MODEL_PATH = 'models/PokestopDetect'
 POKESTOP_IMAGES = 'images/Pokestop/*'
 NOT_POKESTOP_IMAGES = 'images/Nothing/*'
 POKESTOP_IMG_DIM = (100, 150, 3)
@@ -47,7 +47,6 @@ def get_detector():
     return TfImageFinder(
         load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM)
 
-
 POKESTOP_COLOR_CHANGE_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_IMAGE = ''
@@ -85,3 +84,4 @@ def test_pokestop_screen(screenshot):
     """
     # relevant screen area for checking if close enough
     # relevant screen area for spun/available section
+    pass

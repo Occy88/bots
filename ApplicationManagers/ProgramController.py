@@ -4,7 +4,7 @@ try:
     from ApplicationManagers.Win32Wrapper import Win32Wrapper as program
 except Exception as e:
     print("NOT WINDOWS, ASSUMING ADB.")
-    from ApplicationManagers.AdbWrapper import AdbWrapper as program
+    from ApplicationManagers.ADBManager import AdbWrapper as program
 import psutil
 
 PROGRAM_NAME = 'scrcpy.exe'

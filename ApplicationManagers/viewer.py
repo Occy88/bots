@@ -44,6 +44,13 @@ class AndroidViewer(ControlMixin):
         self.codec = av.codec.CodecContext.create('h264', 'r')
         self.init_server_connection()
 
+    def close_all_sockets(self):
+        self.video_socket.__exit__()
+        self.control_socket.__exit__()
+        self.adb_push.terminate()
+        self.shell.terminate()
+        self.server.terminate()
+
     def receiver(self):
         """
         Read h264 video data from video socket and put it in Queue.
@@ -51,7 +58,6 @@ class AndroidViewer(ControlMixin):
         """
         while True:
             raw_h264 = self.video_socket.recv(0x10000)
-
             if not raw_h264:
                 continue
 
@@ -91,16 +97,16 @@ class AndroidViewer(ControlMixin):
 
             server_root = os.path.abspath(os.path.dirname(__file__))
             server_file_path = server_root + '/scrcpy-server.jar'
-            adb_push = subprocess.Popen([self.adb_path, 'push', server_file_path, '/data/local/tmp/'],
-                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=server_root)
-            adb_push_comm = ''.join([x.decode("utf-8") for x in adb_push.communicate() if x is not None])
+            self.adb_push = subprocess.Popen([self.adb_path, 'push', server_file_path, '/data/local/tmp/'],
+                                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=server_root)
+            self.adb_push_comm = ''.join([x.decode("utf-8") for x in self.adb_push.communicate() if x is not None])
 
-            if "error" in adb_push_comm:
+            if "error" in self.adb_push_comm:
                 logger.critical("Is your device/emulator visible to ADB?")
-                raise Exception(adb_push_comm)
+                raise Exception(self.adb_push_comm)
 
             logger.info("Running server...")
-            subprocess.Popen(
+            self.shell = subprocess.Popen(
                 [self.adb_path, 'shell',
                  'CLASSPATH=/data/local/tmp/scrcpy-server.jar',
                  'app_process', '/', 'com.genymobile.scrcpy.Server 1.12.1 {} {} {} true - false true'.format(
@@ -109,9 +115,11 @@ class AndroidViewer(ControlMixin):
             sleep(1)
 
             logger.info("Forward server port...")
-            subprocess.Popen(
+            self.server = subprocess.Popen(
                 [self.adb_path, 'forward', 'tcp:8081', 'localabstract:scrcpy'],
-                cwd=server_root).wait()
+                cwd=server_root)
+            self.server.wait()
+            logger.info('Server waiting')
             sleep(2)
         except FileNotFoundError:
             raise FileNotFoundError("Couldn't find ADB at path ADB_bin: " + str(self.adb_path))

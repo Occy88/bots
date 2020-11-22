@@ -1,19 +1,19 @@
 # Purpose of this file is to manage a screenshot that has been taken,
 # make it easy to get a section of the specified section of the screenshot etc...
 import glob
+import json
 import math
 import os
 import sys
+import uuid
 
 import cv2
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
-import scipy
-import uuid
-import json
 
 if sys.platform == 'win32':
     IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
@@ -221,7 +221,7 @@ class Image:
 
 
 class TfImageFinder:
-    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):
+    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(20, 20), threshold=0.8):
         """
 
         :param model:

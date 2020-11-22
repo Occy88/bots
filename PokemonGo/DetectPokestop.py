@@ -4,9 +4,8 @@ import numpy as np
 from ImageProcessing.ImgTools import TfImageFinder
 from ImageProcessing.conv import load_model
 from ImageProcessing.conv import preprocess_images
-from PokemonGo.PokestopState import PokestopState
 
-POKESTOP_MODEL_PATH = 'models/PokestopDetect'
+POKESTOP_MODEL_PATH = '../models/PokestopDetect'
 POKESTOP_IMAGES = 'images/Pokestop/*'
 NOT_POKESTOP_IMAGES = 'images/Nothing/*'
 POKESTOP_IMG_DIM = (100, 150, 3)
@@ -20,11 +19,12 @@ def clean_img(img_list):
     :param img:
     :return:q
     """
+    print("CLEANING N IMAGES: ", len(img_list))
     for i, img in enumerate(img_list):
-        print('CLEANING IMAGE: ', i)
-        print(img.shape)
-        print(type(img))
-        print(img[0][0])
+        # print('CLEANING IMAGE: ', i)
+        # print(img.shape)
+        # print(type(img))
+        # print(img[0][0])
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         # Threshold of blue in HSV space
         lower_blue = np.array([35, 190, 130])
@@ -47,11 +47,13 @@ def get_detector():
     return TfImageFinder(
         load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM)
 
+
 POKESTOP_COLOR_CHANGE_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_IMAGE = ''
 POKESTOP_AVAILABLE_IMAGE = ''
 POKESTOP_NOT_AVAILABLE_IMAGE = ''
+
 
 # two clicks registered:  [  23 1350] [  61 1374]
 # (2,) (2,) (2,)

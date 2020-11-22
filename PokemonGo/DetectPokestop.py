@@ -43,10 +43,8 @@ def preprocessor(X):
     return preprocess_images(X, (32, 32, 3), clean_img)
 
 
-def get_detector():
-    return TfImageFinder(
-        load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM)
-
+pokestop_detector = TfImageFinder(
+    load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM)
 
 POKESTOP_COLOR_CHANGE_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_PERCENT_AREA = ()

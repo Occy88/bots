@@ -4,13 +4,15 @@ displays it,
 finds pokestops,
 clicks on pokestop locations
 """
-from ApplicationManagers.ADBManager import adb_manager
-from CardPrototyping import GenericCard
+
+from CardPrototyping.GenericCard import GenericCardTemplate
 from ImageProcessing.ImgTools import show_img, crop_img_percent
 from PokemonGo.DetectPokestop import pokestop_detector
 
+print("DECLARING CARD TEST CLASS")
 
-class CardTest(GenericCard):
+
+class CardTest(GenericCardTemplate()):
     """
     An example class connecting with another one
 
@@ -19,8 +21,7 @@ class CardTest(GenericCard):
     """
 
     def __init__(self):
-        super().__init__(self.__class__)
-        pass
+        super().__init__()
 
     def on_swipe(self, xy_from, xy_to):
         pass
@@ -37,11 +38,5 @@ class CardTest(GenericCard):
         self.on_swipe((50, 100), (50, 20))
 
 
-def example(run_time):
-    inst = CardTest()
-    adb_manager.bind_on_frame_update(inst.my_fun_bot, 20)
-    inst.bind_on_sipe(adb_manager.swipe)
-
-    # some random sleep to decide how long you want the above to run for :D
-    import time
-    time.sleep(run_time)
+print('DECLARED NOW INSTANTIATING')
+card_test_card = CardTest()

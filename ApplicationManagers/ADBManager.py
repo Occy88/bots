@@ -1,4 +1,6 @@
+import logging
 import signal
+import sys
 import threading
 import time
 
@@ -6,14 +8,19 @@ import cv2
 import numpy as np
 
 from ApplicationManagers.viewer import AndroidViewer
-from CardPrototyping.GenericCard import GenericCard
+from CardPrototyping.GenericCard import GenericCardTemplate
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                    format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 
-class ADBManager(GenericCard):
+class ADBManager(GenericCardTemplate()):
     def __init__(self):
-        GenericCard.__init__(self, self.__class__)
+        super().__init__()
         self.latest_frame = None
-        print('window thread complete')
+        logging.info('Bind methods generated')
         self.video_thread = None
         self.android = AndroidViewer()
         self.stop = True
@@ -37,29 +44,31 @@ class ADBManager(GenericCard):
         :param xy_to:
         :return:
         """
+        logging.info("Adb Swipe message Recieved: "+str(xy_from)+str( xy_to))
+
         self.android.swipe(*xy_from, *xy_to)
 
-    def _shutdown(self,*args):
-        print('signal received')
+    def _shutdown(self, *args):
+        logging.info('Shutdown Signal Recieved: ', args)
         self.stop = True
         self.android.close_all_sockets()
-        print("SHUTDOWN CALLED")
+        logging.info("SHUTDOWN CALLED")
         time.sleep(2)
-        print("SLEEP COMPLETE")
+        logging.info("SLEEP COMPLETE")
+        return
 
     def _stop_all_threads(self):
-        print("STOPPING ALL THREADS")
+        logging.info("STOPPING ALL THREADS")
         self.stop = True
 
     def _swipe(self, start_x, start_y, end_x, end_y):
         self.android.swipe(start_x, start_y, end_x, end_y)
 
     def _special_opencv_thread(self, window):
-        print("STARTED SPECIAL THREAD ON: ", window)
+        logging.info("Video starting on:" + str(window))
         cv2.namedWindow(window)
-        print("window instantiated")
         cv2.setMouseCallback(window, self.__sanitize_mouse_event)
-        print("callbacks set")
+        logging.info("Callbacks set")
         t = time.time()
         f = 0
         self.stop = False
@@ -82,7 +91,7 @@ class ADBManager(GenericCard):
                 f = 0
         cv2.destroyWindow(window)
         cv2.waitKey(1)
-        print("Thread ended")
+        logging.info("Thread ended")
 
     def _update_dim(self, img):
         self.height = len(img)
@@ -92,7 +101,7 @@ class ADBManager(GenericCard):
         return np.array([self.width, self.height])
 
     def __sanitize_mouse_event(self, event, x, y, flags, param):
-        # print(event, x, y, flags, param)
+        # logging.info(event, x, y, flags, param)
         self.mouse_x = x
         self.mouse_y = y
         kwargs = {'x': x, 'y': y, 'flags': flags, 'param': param, 'event': event}
@@ -101,7 +110,7 @@ class ADBManager(GenericCard):
     def _get_mouse_pos(self):
         return np.array([self.mouse_x, self.mouse_y])
 
-    def _start_capture(self, screen_name):
+    def start_capture(self, screen_name):
         self.stop = False
         self.video_thread = threading.Thread(target=self._special_opencv_thread,
                                              args=[screen_name])
@@ -110,5 +119,5 @@ class ADBManager(GenericCard):
 
 
 #
-adb_manager = ADBManager()
-adb_manager._start_capture('ADBManager')
+adb_manager_card = ADBManager()
+adb_manager_card.start_capture('ADBManager')

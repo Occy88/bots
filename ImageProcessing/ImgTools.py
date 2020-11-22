@@ -221,7 +221,7 @@ class Image:
 
 
 class TfImageFinder:
-    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(20, 20), threshold=0.8):
+    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):
         """
 
         :param model:

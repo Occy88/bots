@@ -127,9 +127,10 @@ class GenericCard:
         args = self.__methods_bound[gc_f_name]['args']
         kwargs = self.__methods_bound[gc_f_name]['kwargs']
         for f in f_list:
-            t=threading.Thread(target=f, args=args, kwargs=kwargs)
-            t.daemon=True
+            t = threading.Thread(target=f, args=args, kwargs=kwargs)
+            t.daemon = True
             t.start()
+
     def __call(self, hz, gc_f_name):
         while True:
             self.__call_functions(hz, gc_f_name)

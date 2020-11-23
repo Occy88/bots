@@ -1,19 +1,59 @@
-import time
+from collections import defaultdict
+from typing import Dict, Tuple, Callable, Iterable
 
-from ImageProcessing.ImgTools import crop_img_percent, save_img, show_img
-from ApplicationManagers.ProgramController import *
+import numpy
 
-WINDOW_TITLE = ''
-p = ProgramController(WINDOW_TITLE)
-p.program.start_capture('adb')
-time.sleep(10)
-s = p.program.get_latest_screenshot()
 
-# print(s)
-s = crop_img_percent(s, 0, .3, 1, .5)
-from PokemonGo.DetectPokestop import clean_img
+def model_quadratic(model_parameters: dict):
+    """
+    This is a quadratic model with a minimum at a=0.5, b=0.75, c=0.25.
+    """
+    a = model_parameters['a']
+    b = model_parameters['b']
+    c = model_parameters['c']
 
-s = clean_img([s])[0]
-show_img(s)
-save_img(s, 'pokestop_detect', True)
-p.program.stop_all_threads()
+    return 1.75 + (a - 0.5) * 2 + (b - 0.75) * 2 + (c - 0.25) ** 2
+
+
+class Problem:
+    @staticmethod
+    def grid_search(search_space: Dict[str, Iterable],
+                    scoring_func: Callable[[Dict[str, float]], float]) -> Tuple[float, Dict[str, float]]:
+        """
+        This function accepts a search space, which is a dictionary of arrays.
+
+        For each key in the dictionary, the respective array holds the numbers in the search space that should be
+        tested for.
+
+        This function also accepts a scoring_func, which is a scoring function which will return a float score given a
+        certain set of parameters.  The set of parameters is given as a simple dictionary. As an example, see
+        model_quadratic above.
+        """
+        scores = []
+        for key, val in search_space.items():
+            print(defaultdict(val))
+            score = model_quadratic(defaultdict(val))
+            scores.append(score)
+        min_ind = numpy.argmin(numpy.array(scores))
+        return scores[min_ind[0]], search_space[min_ind]
+
+print(Problem.grid_search({
+
+    'a': numpy.arange(0.0, 1.0, 0.05),
+    'b': numpy.arange(0.0, 1.0, 0.05),
+    'c': numpy.arange(0.0, 1.0, 0.05),
+}, model_quadratic))
+
+import heapq
+def nm(l, n):
+    d = dict()
+    for v in l:
+        if v not in d:
+            d[v] = 0
+        d[v] += 1
+
+    occ=d[n]
+    vals=[]
+    for key,val in d:
+        vals.append(vals)
+

@@ -1,11 +1,23 @@
-from ApplicationManagers.ADBManager import adb_manager_card
-from CardPrototyping.CardTest import card_test_card
+# test this shit
+from CardPrototyping.GenericCard import GenericCardTemplate
 
 
-def example(run_time):
-    adb_manager_card.bind_on_frame_update(card_test_card.my_fun_bot, 20)
-    card_test_card.bind_on_swipe(adb_manager_card.swipe)
+class ChangeText(GenericCardTemplate()):
+    def on_call(self, arg='hello world'):
+        print("PROCESS TEXT RECEIVED: : ", arg)
+        arg = arg + " some modification"
+        return arg
 
-    # some random sleep to decide how long you want the above to run for :D
-    import time
-    time.sleep(run_time)
+    def on_method(self):
+        return None
+
+    def other_method(self, args):
+        return args
+
+# def example():
+#     adb_manager_card.on_frame_update_complete(card_test_card.my_fun_bot, 20)
+#     card_test_card.on_swipe_complete(adb_manager_card.swipe)
+#
+#     # some random sleep to decide how long you want the above to run for :D
+#     import time
+#     time.sleep(run_time)

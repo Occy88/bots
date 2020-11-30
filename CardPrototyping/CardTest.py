@@ -23,10 +23,12 @@ class CardTest(GenericCardTemplate()):
     def __init__(self):
         super().__init__()
 
-    def on_swipe(self, xy_from, xy_to):
-        pass
-
-    def my_fun_bot(self, img):
+    def on_bot_recieve_img(self, img):
+        """
+        receives image, returns coordinates to swipe from and to
+        :param img:
+        :return:
+        """
         print("DETECTING LOCATIONS")
         img = crop_img_percent(img, 0, .4, 1, .4)
         show_img(img)
@@ -35,7 +37,7 @@ class CardTest(GenericCardTemplate()):
         show_img(img2)
         print(num_loc)
         print("SWIPING")
-        self.on_swipe((50, 100), (50, 20))
+        return (50, 100), (50, 20)
 
 
 print('DECLARED NOW INSTANTIATING')

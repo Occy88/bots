@@ -1,23 +1,16 @@
-from CardPrototyping.Human import Human
-from ApplicationManagers.ProgramController import ProgramController
-adb_interface=ProgramController('ADB')
-adb_interface.program.start_capture()
-
-def print_on_update(*args, **kwargs):
-    print("I GOT UPDATED: ", args, kwargs)
-
-
-def print_every_5(*args, **kwargs):
-    print("===========================")
-    print("IM BEING PRINTED EVERY 5 seconds: ", args, kwargs)
-
-
-h = Human()
 import time
 
-h.register_move_update(print_on_update)
-h.register_move_update(print_every_5, 5)
+from CardPrototyping.Functions import modify_text
+from CardPrototyping.card_ReceiveProcessText.instances_ReceiveText import tell_humans
 
-for i in range(100):
+
+def main(text):
+    print("+++++++++++++SENT SIGNAL TO PROCESS TEXT+++++++++++")
+    text = modify_text(text)
+    tell_humans.on_msg(text)
     time.sleep(1)
-    h.move_update(1, 2)
+
+
+if __name__ == '__main__':
+    main("hello world")
+# {'on_msg': {'args': ('hello world',), 'kwargs': {}, -1: [], 10: [<bound method GenericCardTemplate.<locals>.GenericCard.__generic_callback_template.<locals>.__generic_callback of <CardPrototyping.card_Human.Human.Human object at 0x7fb7320687b8>>], 5: [<bound method GenericCardTemplate.<locals>.GenericCard.__generic_callback_template.<locals>.__generic_callback of <CardPrototyping.card_Human.Human.Human object at 0x7fb7320686a0>>], 'returned_args': [None]}}

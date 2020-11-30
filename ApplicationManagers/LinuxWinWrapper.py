@@ -2,7 +2,7 @@ import numpy as np
 import win32gui
 import win32ui
 from ctypes import windll
-from ApplicationManagers.WindowInterface import WindowInterface
+from CardPrototyping.card_Windows.WindowInterface import WindowInterface
 import cv2
 from time import time
 

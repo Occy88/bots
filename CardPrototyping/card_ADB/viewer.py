@@ -9,7 +9,7 @@ from time import sleep
 
 import av
 
-from ApplicationManagers.control import ControlMixin
+from CardPrototyping.card_ADB.control import ControlMixin
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,

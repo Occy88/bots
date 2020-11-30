@@ -7,7 +7,7 @@ import time
 import cv2
 import numpy as np
 
-from ApplicationManagers.viewer import AndroidViewer
+from CardPrototyping.card_ADB.viewer import AndroidViewer
 from CardPrototyping.GenericCard import GenericCardTemplate
 
 logger = logging.getLogger(__name__)

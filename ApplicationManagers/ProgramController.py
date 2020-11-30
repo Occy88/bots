@@ -1,10 +1,10 @@
-from ApplicationManagers.utils import get_process_by_name
+from CardPrototyping.card_Windows.utils import get_process_by_name
 
 try:
-    from ApplicationManagers.Win32Wrapper import Win32Wrapper as program
+    from CardPrototyping.card_Windows.Windows import Win32Wrapper as program
 except Exception as e:
     print("NOT WINDOWS, ASSUMING ADB.")
-    from ApplicationManagers.ADBManager import AdbWrapper as program
+    from CardPrototyping.card_ADB.ADB import AdbWrapper as program
 import psutil
 
 PROGRAM_NAME = 'scrcpy.exe'

@@ -1,17 +1,15 @@
 from ctypes import windll
 from time import time
-
+from CardPrototyping.GenericCard import GenericCardTemplate
 import cv2
 import numpy as np
+import win32api
 import win32gui
 import win32ui
-import win32api
-from ApplicationManagers.WindowInterface import WindowInterface
 
 
-class Win32Wrapper(WindowInterface):
+class Win32Wrapper(GenericCardTemplate()):
     def __init__(self, window_title):
-        WindowInterface.__init__(self, window_title)
         self.win_32_window = win32gui.FindWindow(None, window_title)
         self.update_properties()
         print('properties updated, starting thread')
@@ -34,7 +32,7 @@ class Win32Wrapper(WindowInterface):
         y -= self.top
         return np.array([x, y])
 
-    def get_cursor_location():
+    def get_cursor_location(self):
         flags, hcursor, (x, y) = win32gui.GetCursorInfo()
         return win32api.GetCursorPos()
 

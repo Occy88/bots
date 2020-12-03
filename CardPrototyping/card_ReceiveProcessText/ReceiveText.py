@@ -7,14 +7,12 @@ class ReceiveText(GenericCardTemplate()):
     Print C
     """
 
-    def on_msg(self, text):
+    def do_send_msg(self, text):
         """
         receives text,
         :param text:
         :return:
         """
-        text = "on_msg_modified " + text
+        text = "do_msg_modified " + text
         print("MSG Received, (modified a bit) : ", text)
         pass
-
-

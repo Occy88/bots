@@ -1,14 +1,21 @@
 import time
 
+# from PokemonGo.DetectPokestop import pokestop_detector
 from CardPrototyping.Functions import modify_text
 from CardPrototyping.card_ReceiveProcessText.instances_ReceiveText import tell_humans
 
 
+# from CardPrototyping.card_ADB.instances_ADB import  android_phone
 def main(text):
     print("+++++++++++++SENT SIGNAL TO PROCESS TEXT+++++++++++")
     text = modify_text(text)
-    tell_humans.on_msg(text)
-    time.sleep(1)
+    tell_humans.do_send_msg(text)
+    # time.sleep(1)
+    # android_phone.do_frame_update_complete(pokestop_detector.find_locations)
+    while True:
+        text=input("Tell registered humans to say something: ")
+        tell_humans.do_send_msg(text)
+    time.sleep(1000)
 
 
 if __name__ == '__main__':

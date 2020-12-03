@@ -23,7 +23,7 @@ class CardTest(GenericCardTemplate()):
     def __init__(self):
         super().__init__()
 
-    def on_bot_recieve_img(self, img):
+    def do_bot_recieve_img(self, img):
         """
         receives image, returns coordinates to swipe from and to
         :param img:

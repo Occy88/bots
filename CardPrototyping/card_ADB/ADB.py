@@ -15,7 +15,6 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                     format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-
 class ADBManager(GenericCardTemplate()):
     def __init__(self):
         super().__init__()
@@ -30,10 +29,10 @@ class ADBManager(GenericCardTemplate()):
         signal.signal(signal.SIGQUIT, self._shutdown)
         signal.signal(signal.SIGHUP, self._shutdown)
 
-    def on_mouse_event(self, x=0, y=0, flags=0, **kwargs):
+    def do_mouse_event(self, x=0, y=0, flags=0, **kwargs):
         pass
 
-    def on_frame_update(self, img: np.ndarray):
+    def do_frame_update(self, img: np.ndarray):
         pass
 
     def swipe(self, xy_from, xy_to):
@@ -84,7 +83,7 @@ class ADBManager(GenericCardTemplate()):
                 f += 1
                 self.latest_frame = frame
                 self._update_dim(self.latest_frame)
-                self.on_frame_update(self.latest_frame)
+                self.do_frame_update(self.latest_frame)
                 cv2.imshow(window, frame)
                 cv2.waitKey(1)
             if dt > 1:
@@ -105,7 +104,7 @@ class ADBManager(GenericCardTemplate()):
         self.mouse_x = x
         self.mouse_y = y
         kwargs = {'x': x, 'y': y, 'flags': flags, 'param': param, 'event': event}
-        self.on_mouse_event(**kwargs)
+        self.do_mouse_event(**kwargs)
 
     def _get_mouse_pos(self):
         return np.array([self.mouse_x, self.mouse_y])
@@ -119,5 +118,3 @@ class ADBManager(GenericCardTemplate()):
 
 
 #
-adb_manager_card = ADBManager()
-adb_manager_card.start_capture('ADBManager')

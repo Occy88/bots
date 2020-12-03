@@ -237,8 +237,11 @@ class TfImageFinder:
         self.threshold = threshold
 
     def find_locations(self, test_img):
+
         pict = template_match_tfmodel(test_img, self.match_np_dim, self.preprocessor, self.model.predict, *self.divisor)
         pict_peaks = find_peaks(pict, self.threshold)
+        show_img(test_img)
+        show_img(pict_peaks[0])
         return pict, pict_peaks
 
 

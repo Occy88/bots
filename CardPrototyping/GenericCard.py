@@ -15,7 +15,7 @@ def GenericCardTemplate():
         """
         A function calls a set of functions with latest args at a set time interval
         to create a bind_on function:
-        create a function who's name starts with: on_
+        create a function who's name starts with: do_
         the functions generated for you will be: bind_on_...
 
         signature
@@ -57,7 +57,7 @@ def GenericCardTemplate():
             for index, (gc_f_name, f) in enumerate(methods):
                 # logging.info(index, gc_f_name, f)
                 # logging.info(gc_f_name.startswith('_'))
-                if not gc_f_name.startswith('on_'):
+                if not gc_f_name.startswith('do_'):
                     continue
                 methods_child.append((gc_f_name, f))
             # logging.info("FINISHED GETTING ALL CHILD====================")
@@ -147,7 +147,7 @@ def GenericCardTemplate():
 
                 # print('_complete method signature: ', inspect.signature(f))
                 # add the gc_f_name to the current list of methods bound
-                # print("overwriting on_ method: ", gc_f_name)
+                # print("overwriting do_ method: ", gc_f_name)
                 self.__methods_bound[gc_f_name] = {'args': (), 'kwargs': {}, 'returned_args': [None], -1: []}
                 # print("dictionary updated: ", self.__methods_bound[gc_f_name])
                 # overwrite bound function by user so we can perform calls to all hooked functions

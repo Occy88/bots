@@ -221,7 +221,7 @@ class Image:
 
 
 class TfImageFinder:
-    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):
+    def __init__(self, model, preprocessor, match_np_dim=(100, 150), divisor=(4, 4), threshold=0.8):
         """
 
         :param model:
@@ -232,17 +232,25 @@ class TfImageFinder:
         """
         self.preprocessor = preprocessor
         self.model = model
-        self.match_np_dim = match_np_dim
-        self.divisor = divisor
+        self.match_np_dim = np.array(match_np_dim)
+        self.divisor = np.array(divisor)
         self.threshold = threshold
 
     def find_locations(self, test_img):
-
         pict = template_match_tfmodel(test_img, self.match_np_dim, self.preprocessor, self.model.predict, *self.divisor)
         pict_peaks = find_peaks(pict, self.threshold)
+        print("===========================")
+        peaks = np.where(pict_peaks[0] > self.threshold)
+        peaks = np.array(peaks)
+        peaks = peaks.T
+        peaks *= self.divisor
+        offset = self.match_np_dim / 2
+        print(offset)
+        peaks += offset.astype(int)[:-1]
         show_img(test_img)
+        show_img(pict)
         show_img(pict_peaks[0])
-        return pict, pict_peaks
+        return pict, peaks
 
 
 def find_image_locations(model, test_img, match_np_dim=(100, 150), divisor=(10, 10), threshold=0.8):

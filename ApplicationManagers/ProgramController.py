@@ -4,7 +4,7 @@ try:
     from CardPrototyping.card_Windows.Windows import Win32Wrapper as program
 except Exception as e:
     print("NOT WINDOWS, ASSUMING ADB.")
-    from CardPrototyping.card_ADB.ADB import AdbWrapper as program
+    from CardPrototyping.card_ADB.instances_ADB import android_phone
 import psutil
 
 PROGRAM_NAME = 'scrcpy.exe'

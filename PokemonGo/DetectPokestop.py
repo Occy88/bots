@@ -44,13 +44,12 @@ def preprocessor(X):
 
 
 pokestop_detector = TfImageFinder(
-    load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM)
+    load_model(POKESTOP_MODEL_PATH), preprocessor, POKESTOP_IMG_DIM, threshold=0.8)
 POKESTOP_COLOR_CHANGE_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_PERCENT_AREA = ()
 POKESTOP_TOO_FAR_IMAGE = ''
 POKESTOP_AVAILABLE_IMAGE = ''
 POKESTOP_NOT_AVAILABLE_IMAGE = ''
-
 
 # two clicks registered:  [  23 1350] [  61 1374]
 # (2,) (2,) (2,)
@@ -76,11 +75,42 @@ POKESTOP_NOT_AVAILABLE_IMAGE = ''
 # x,y: [0.13055556 0.77702703]
 # w,h: [0.74861111 0.09932432]
 # =========== IMAGE SAVED========
-def test_pokestop_screen(screenshot):
-    """
-    returns state of pokestop
-    :return: PokestopState:state.
-    """
-    # relevant screen area for checking if close enough
-    # relevant screen area for spun/available section
-    pass
+from ImageProcessing.ImgTools import crop_img_percent
+
+p_xy = [0, 0.4]
+p_wh = [1, 0.4]
+
+
+def get_pokestop_area(img):
+    return crop_img_percent(img, *p_xy, *p_wh)
+
+
+from CardPrototyping.card_ADB.instances_ADB import android_phone
+
+swipe = (270, 800), (600, 800)
+click = (350, 1300)
+
+import time
+
+
+def find_locations(img):
+    img2 = get_pokestop_area(img)
+    picture, peaks = pokestop_detector.find_locations(img2)
+    print(np.array(p_xy), np.array(np.flip(img.shape)[1:], dtype=np.float))
+    print(peaks)
+    offset = np.array(np.flip(p_xy), dtype=np.float) * np.array(img.shape[:-1], dtype=np.float)
+    print(peaks)
+    print(offset)
+    for index, p in enumerate(peaks):
+        p += offset.astype(int)
+        p = np.flip(p)
+        if index > 3:
+            break
+        print("CLICKING ON: ", p)
+        android_phone.swipe(p, p)
+        # time.sleep(0.7)
+        # android_phone.swipe(*swipe)
+        # time.sleep(0.3)
+        # android_phone.swipe(click, click)
+        time.sleep(1)
+    print("==============")

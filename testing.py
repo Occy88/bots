@@ -14,7 +14,6 @@ def model_quadratic(model_parameters: dict):
 
     return 1.75 + (a - 0.5) * 2 + (b - 0.75) * 2 + (c - 0.25) ** 2
 
-
 class Problem:
     @staticmethod
     def grid_search(search_space: Dict[str, Iterable],

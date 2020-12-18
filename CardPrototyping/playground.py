@@ -1,7 +1,9 @@
-from CardPrototyping.Human import Human
 from ApplicationManagers.ProgramController import ProgramController
-adb_interface=ProgramController('ADB')
+from CardPrototyping.Human import Human
+
+adb_interface = ProgramController('ADB')
 adb_interface.program.start_capture()
+
 
 def print_on_update(*args, **kwargs):
     print("I GOT UPDATED: ", args, kwargs)

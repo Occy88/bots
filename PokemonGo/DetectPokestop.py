@@ -6,8 +6,8 @@ from ImageProcessing.conv import load_model
 from ImageProcessing.conv import preprocess_images
 
 POKESTOP_MODEL_PATH = '../models/PokestopDetect'
-POKESTOP_IMAGES = 'images/Pokestop/*'
-NOT_POKESTOP_IMAGES = 'images/Nothing/*'
+POKESTOP_IMAGES = '../images/Pokestop/*'
+NOT_POKESTOP_IMAGES = '../images/Nothing/*'
 POKESTOP_IMG_DIM = (100, 150, 3)
 POKESTOP_RESIZE_DIM = (32, 32, 3)
 

@@ -15,6 +15,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                     format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
+
 class ADBManager(GenericCardTemplate()):
     def __init__(self):
         super().__init__()
@@ -35,7 +36,7 @@ class ADBManager(GenericCardTemplate()):
     def do_frame_update(self, img: np.ndarray):
         pass
 
-    def swipe(self, xy_from, xy_to):
+    def swipe(self, xy_from: np.ndarray, xy_to: np.ndarray, as_percent=False):
         """
         Swipe or click event
         (from==to -> click)
@@ -43,8 +44,12 @@ class ADBManager(GenericCardTemplate()):
         :param xy_to:
         :return:
         """
-        logging.info("Adb Swipe message Recieved: "+str(xy_from)+str( xy_to))
 
+        if as_percent:
+            t = np.array([self.width, self.height])
+            xy_from = t * xy_from
+            xy_to = t * xy_to
+        logging.info("Adb Swipe message Recieved: " + str(xy_from) + str(xy_to))
         self.android.swipe(*xy_from, *xy_to)
 
     def _shutdown(self, *args):
@@ -115,6 +120,5 @@ class ADBManager(GenericCardTemplate()):
                                              args=[screen_name])
         self.video_thread.daemon = True
         self.video_thread.start()
-
 
 #

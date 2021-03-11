@@ -22,19 +22,28 @@ else:
     IMG_ROOT = os.getcwd() + '/'
 
 
-def crop_img(img, x, y, w, h):
+def crop_img(img, x, y, w, h, as_percentage=False):
+    if as_percentage:
+        t_h = len(img)
+        t_w = len(img[0])
+        x = int(t_w * x)
+        y = int(t_h * y)
+        w = int(t_w * w)
+        h = int(t_h * h)
     crop_img = img[y:y + h, x:x + w]
     return crop_img
 
 
-def crop_img_percent(img, x, y, w, h):
-    t_h = len(img)
-    t_w = len(img[0])
-    p_x = int(t_w * x)
-    p_y = int(t_h * y)
-    p_w = int(t_w * w)
-    p_h = int(t_h * h)
-    return crop_img(img, p_x, p_y, p_w, p_h)
+# def crop_img_percent(img, x, y, w, h):
+#     return crop_img(img, p_x, p_y, p_w, p_h)
+
+
+def crop_img_two_coords(img, x1, y1, x2, y2, as_percentage=False):
+    x = x1
+    y = y1
+    w = x2 - x1
+    h = y2 - y1
+    return crop_img(img, x, y, w, h, as_percentage)
 
 
 def save_img(img, name, with_uuid=False, format='.png', path='images/'):
@@ -119,6 +128,17 @@ def template_match_tfmodel(template, test_dim_np, preproces_func, predict_func, 
     return pict
 
 
+def resize_bigger_to_smaller_img(img1, img2):
+    if len(img1) < len(img2):
+        img1 = cv2.resize(img2, fx=len(img1[0]) / len(img2[0]), fy=len(img1) / len(img2))
+        return img1, img2
+    if len(img1) > len(img2):
+        img2 = cv2.resize(img2, fx=len(img2[0]) / len(img1[0]), fy=len(img2) / len(img1))
+        return img1, img2
+
+    return img1, img2
+
+
 def img_col_similarity(img1, img2):
     """
     returns similarity of two image by color:
@@ -127,9 +147,15 @@ def img_col_similarity(img1, img2):
     :param img2:
     :return:
     """
-    delta = np.sum(np.abs(img1 - img2))
+    if len(img1) != len(img2):
+        print("SCALING FOR UNSIMILAR")
+        img1, img2 = resize_bigger_to_smaller_img(img1, img2)
+    show_img(img1)
+    show_img(img2)
+    img3 = cv2.subtract(img1, img2)
+    show_img(img3)
     tot = 255 * np.prod(img1.shape)
-    return delta / tot
+    return 1 - (np.sum(img3) / tot)
 
 
 def find_peaks(p_2d_arr, threshold):

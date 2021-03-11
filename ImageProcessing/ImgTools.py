@@ -138,6 +138,20 @@ def resize_bigger_to_smaller_img(img1, img2):
     return img1, img2
 
 
+def get_image_difference(image_1, image_2):
+    first_image_hist = cv2.calcHist([image_1], [0], None, [256], [0, 256])
+    second_image_hist = cv2.calcHist([image_2], [0], None, [256], [0, 256])
+
+    img_hist_diff = cv2.compareHist(first_image_hist, second_image_hist, cv2.HISTCMP_BHATTACHARYYA)
+    img_template_probability_match = \
+        cv2.matchTemplate(first_image_hist, second_image_hist, cv2.TM_CCOEFF_NORMED)[0][0]
+    img_template_diff = 1 - img_template_probability_match
+
+    # taking only 10% of histogram diff, since it's less accurate than template method
+    commutative_image_diff = (img_hist_diff / 10) + img_template_diff
+    return commutative_image_diff
+
+
 def img_col_similarity(img1, img2):
     """
     returns similarity of two image by color:
@@ -146,15 +160,19 @@ def img_col_similarity(img1, img2):
     :param img2:
     :return:
     """
+    # print(get_image_difference(img1,img2))
     if len(img1) != len(img2):
         print("SCALING FOR UNSIMILAR")
         img1, img2 = resize_bigger_to_smaller_img(img1, img2)
     show_img(img1)
     show_img(img2)
     img3 = cv2.subtract(img1, img2)
+    # print(img3[0])
     show_img(img3)
-    tot = 255 * np.prod(img1.shape)
-    return 1 - (np.sum(img3) / tot)
+    tot = 125 * np.prod(img1.shape)
+    delta = np.sum(img3)
+
+    return 1 - delta / tot
 
 
 def find_peaks(p_2d_arr, threshold):

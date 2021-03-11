@@ -13,22 +13,25 @@ gen = MLPictureGen.MLPictureGen('adb')
 def open_gift_page():
     open_page = gen.test_image(path, 'open_gift_page')
     print(open_page)
-    return open_page > 0.988
+    return open_page > 0.81
 
 
 def leave_page():
     print("LEAVINNG PAGE")
     btn = np.array([0.50462963, 0.87575])
-    android_phone.swipe(btn, btn,True)
+    android_phone.swipe(btn, btn, True)
     time.sleep(1)
 
 
 def gift_received():
-    return gen.test_image(path, 'gift_received_profile') > 0.988
+    v = gen.test_image(path, 'gift_received_profile')
+    print("checking recieved: ", v)
+
+    return v > 0.81
 
 
 def can_send():
-    return gen.test_image(path, 'can_send_gift_profile') > 0.988
+    return gen.test_image(path, 'can_send_gift_profile') > 0.81
 
 
 def change_profile():
@@ -118,7 +121,7 @@ class SendGifts(GenericCardTemplate()):
                     print("Opening Gift")
                     limit_reached = not open_gift()
 
-            if  can_send():
+            if can_send():
                 # break
                 print("Sending gift")
                 send_gift()

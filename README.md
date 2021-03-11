@@ -7,10 +7,12 @@ pip3 install -r requirements.txt
 The android phone manager (screeshot, video streaming etc ) is under Application managers
 
 
-I broke things down into "cards" this just was some prototyping I was doing to simplify chaining events, 
+I broke things down into "cards" this just was some prototyping I was doing to simplify chaining events (for a larger overall project,)
+The pokemon go bot came out as a side product, i've made a vew other ones.
+
 just treat them as classes.
 
-the sending gifts card is under CardPrototyping/card_SendGifts
+the sending gifts program is under CardPrototyping/card_SendGifts
 
 it's a very easy run:
 

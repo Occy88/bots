@@ -84,7 +84,6 @@ def load_dir(file_regx, img_dim):
 
 
 def show_img(img):
-    print("SHOWING IMAGE")
     plt.imshow(img)
     plt.show()
 

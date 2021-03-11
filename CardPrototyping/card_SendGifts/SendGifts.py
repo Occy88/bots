@@ -10,12 +10,25 @@ path = '../../PokemonGo/images/FriendGifting/'
 gen = MLPictureGen.MLPictureGen('adb')
 
 
+def open_gift_page():
+    open_page = gen.test_image(path, 'open_gift_page')
+    print(open_page)
+    return open_page > 0.988
+
+
+def leave_page():
+    print("LEAVINNG PAGE")
+    btn = np.array([0.50462963, 0.87575])
+    android_phone.swipe(btn, btn,True)
+    time.sleep(1)
+
+
 def gift_received():
-    return gen.test_image(path, 'gift_received_profile') > 0.98
+    return gen.test_image(path, 'gift_received_profile') > 0.988
 
 
 def can_send():
-    return gen.test_image(path, 'can_send_gift_profile') > 0.98
+    return gen.test_image(path, 'can_send_gift_profile') > 0.988
 
 
 def change_profile():
@@ -34,11 +47,16 @@ def open_gift():
     open = np.array([0.39259259, 0.77833333])
 
     android_phone.swipe(open, open, True)
-    time.sleep(5)
+    time.sleep(4)
     print("Open Click")
-
+    time.sleep(1)
+    if open_gift_page():
+        print("GIFT LIMIT REACHED .....")
+        leave_page()
+        return False
     android_phone.swipe(open, open, True)
     time.sleep(15)
+    return True
 
 
 def send_gift():
@@ -53,9 +71,9 @@ def send_gift():
     time.sleep(2)
     print("Send Confirm")
     send_confirm = np.array([0.47037037, 0.79625])
+
     android_phone.swipe(send_confirm, send_confirm, True)
     time.sleep(7)
-    pass
 
 
 step1 = (130, 450)
@@ -89,18 +107,23 @@ class SendGifts(GenericCardTemplate()):
     def do_send_gifts(self):
         print("initiating transfer routine in 10s")
         time.sleep(10)
+        limit_reached = False
+
         while True:
             if gift_received():
-                print("Gift Received")
-                print("Opening Gift")
-                open_gift()
-            if not can_send():
-                print("Can't send")
-                break
-            print("Sending gift")
-            send_gift()
-            print("Changing profile")
-            change_profile()
+                if limit_reached:
+                    leave_page()
+                else:
+                    print("Gift Received")
+                    print("Opening Gift")
+                    limit_reached = not open_gift()
+
+            if  can_send():
+                # break
+                print("Sending gift")
+                send_gift()
+                print("Changing profile")
+                change_profile()
         # print("initiating for: ")
         # for i in range(num_pokemon):
         #     print(i / num_pokemon, '% left: ', num_pokemon - i)

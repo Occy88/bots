@@ -69,14 +69,13 @@ wait for installation to end
 
 7. Run the programm:
 in powershell:
-cd CardPrototyping/card_SendGifts
-you should be in that directory.
+you should be in the root of the project
 plug in your phone, make sure adb works but is not running.
 open pokemon go
 go to friends list
 order friends by can recieve
 open first friend's profile in list.
 execute:
-python3 SendGifts.py
+python3 playground.py
 
 you should see your phone's screen show up on the laptop.

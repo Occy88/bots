@@ -31,11 +31,11 @@ class CardTest(GenericCardTemplate()):
         """
         print("DETECTING LOCATIONS")
         img = crop_img_percent(img, 0, .4, 1, .4)
-        show_img(img)
+        # show_img(img)
         img1, (img2, num_loc) = pokestop_detector.find_locations(img)
-        show_img(img1)
-        show_img(img2)
-        print(num_loc)
+        # show_img(img1)
+        # show_img(img2)
+        # print(num_loc)
         print("SWIPING")
         return (50, 100), (50, 20)
 

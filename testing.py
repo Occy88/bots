@@ -14,6 +14,6 @@ s = crop_img_percent(s, 0, .3, 1, .5)
 from PokemonGo.DetectPokestop import clean_img
 
 s = clean_img([s])[0]
-show_img(s)
+# show_img(s)
 save_img(s, 'pokestop_detect', True)
 p.program.stop_all_threads()

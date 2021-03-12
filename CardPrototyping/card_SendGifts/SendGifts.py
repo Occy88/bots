@@ -1,12 +1,15 @@
+import os
+
+print(os.getcwd())
+
 from CardPrototyping.GenericCard import GenericCardTemplate
 from CardPrototyping.card_ADB.instances_ADB import android_phone
 from ImageProcessing.ImgTools import img_col_similarity
 from ImageProcessing import MLPictureGen
 import numpy as np
-# path = '../PokemonGo/images/FriendGifting/'
-import os
 
-path = '../../PokemonGo/images/FriendGifting/'
+# path = '../PokemonGo/images/FriendGifting/'
+path = 'PokemonGo/images/FriendGifting/'
 gen = MLPictureGen.MLPictureGen('adb')
 
 
@@ -141,11 +144,3 @@ class SendGifts(GenericCardTemplate()):
         #     time.sleep(med_d)
         #     android_phone.swipe(step5, step5)
         #     time.sleep(long_d)
-
-
-t = SendGifts("some name")
-
-# android_phone.do_mouse_event_complete(t.print_click)
-t.do_send_gifts()
-# t.do_transfer(5)
-time.sleep(100)

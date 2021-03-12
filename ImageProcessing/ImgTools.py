@@ -164,11 +164,11 @@ def img_col_similarity(img1, img2):
     if len(img1) != len(img2):
         print("SCALING FOR UNSIMILAR")
         img1, img2 = resize_bigger_to_smaller_img(img1, img2)
-    show_img(img1)
-    show_img(img2)
+    # show_img(img1)
+    # show_img(img2)
     img3 = cv2.subtract(img1, img2)
     # print(img3[0])
-    show_img(img3)
+    # show_img(img3)
     tot = 125 * np.prod(img1.shape)
     delta = np.sum(img3)
 
@@ -290,9 +290,9 @@ class TfImageFinder:
         offset = self.match_np_dim / 2
         print(offset)
         peaks += offset.astype(int)[:-1]
-        show_img(test_img)
-        show_img(pict)
-        show_img(pict_peaks[0])
+        # show_img(test_img)
+        # show_img(pict)
+        # show_img(pict_peaks[0])
         return pict, peaks
 
 

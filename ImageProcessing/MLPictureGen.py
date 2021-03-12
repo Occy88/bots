@@ -9,6 +9,7 @@ from CardPrototyping.card_ADB.instances_ADB import android_phone
 
 from ImageProcessing.ImgTools import crop_center, save_img, crop_img, show_img, img_col_similarity, load_img
 import json
+import os
 
 
 class MLPictureGen():
@@ -61,10 +62,9 @@ class MLPictureGen():
         """
         Image name should be in the format: name+ | + coord 1 + coord 2 +|+bool as percent
         """
-        import os
-        print(path)
-        print(os.listdir(path))
-        print("-------------")
+        # print(path)
+        # print(os.listdir(path))
+        # print("-------------")
         img_name_with_coords = ''
         for a in os.listdir(path):
             if a.split("|")[0] == img_name:
@@ -76,13 +76,13 @@ class MLPictureGen():
         # show_img(img)
         details = json.loads(img_name_with_coords.split('|')[1].replace('.png', ''))
         img = crop_img(img, *details['xy'], *details['wh'], details['as_percentage'])
-        show_img(img)
+        # show_img(img)
         fp = path + img_name_with_coords
         # print(fp)
         img2 = load_img(fp)
-        show_img(img2)
+        # show_img(img2)
         sim = img_col_similarity(img, img2)
-        print(sim)
+        # print(sim)
         return sim
 
     def capture_on_two_click(self, name, path, as_percentage=True, with_coords=True, with_uuid=False, format='.png'):

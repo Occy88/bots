@@ -6,7 +6,6 @@ except:
     print("keyboard module not loaded")
 from keyboard import KeyboardEvent
 from CardPrototyping.card_ADB.instances_ADB import android_phone
-
 from ImageProcessing.ImgTools import crop_center, save_img, crop_img, show_img, img_col_similarity, load_img
 import json
 import os
@@ -105,7 +104,6 @@ class MLPictureGen():
                     self.ctc_first = None
                     ctc_second = android_phone._get_mouse_pos()
                     print("two clicks registered: ", ctc_first, ctc_second)
-
                     win_dim = android_phone._get_window_dim()
                     print(ctc_first.shape, ctc_second.shape, win_dim.shape)
 
@@ -126,9 +124,7 @@ class MLPictureGen():
                     nm += '|' + json.dumps(details)
                     save_img(crop_img(img, *ctc_first, *wh, as_percentage), nm, with_uuid=with_uuid, format=format,
                              path=path)
-
                     print('=========== IMAGE SAVED========')
-
         android_phone.do_mouse_event_complete(process_click)
 
     def print_percentages(self, key):

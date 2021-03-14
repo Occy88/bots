@@ -16,7 +16,7 @@ gen = MLPictureGen.MLPictureGen()
 def open_gift_page():
     open_page = gen.test_image(path, 'open_gift_page')
     print(open_page)
-    return open_page > 0.98
+    return open_page > 0.8
 
 
 def leave_page():
@@ -30,11 +30,11 @@ def gift_received():
     v = gen.test_image(path, 'gift_received_profile')
     print("checking recieved: ", v)
 
-    return v > 0.98
+    return v > 0.8
 
 
 def can_send():
-    return gen.test_image(path, 'can_send_gift_profile') > 0.83
+    return gen.test_image(path, 'can_send_gift_profile') > 0.7
 
 
 def change_profile():

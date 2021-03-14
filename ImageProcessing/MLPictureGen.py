@@ -9,7 +9,7 @@ except ModuleNotFoundError:
     KeyboardEvent = str
     print("keyboard module not loaded")
 from CardPrototyping.card_ADB.instances_ADB import android_phone
-from ImageProcessing.ImgTools import crop_center, save_img, crop_img, show_img, img_col_similarity, load_img
+from ImageProcessing.ImgTools import crop_center, save_img, crop_img, show_img, img_col_similarity, load_img,resize_images
 import json
 import os
 
@@ -72,6 +72,7 @@ class MLPictureGen:
         # print("-------------")
 
         img = android_phone.latest_frame
+
         # show_img(img)
         details = json.loads(open(path + img_name + '.json', 'r').read())
         img = crop_img(img, *details['xy'], *details['wh'], details['as_percentage'])

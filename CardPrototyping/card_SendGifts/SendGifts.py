@@ -72,7 +72,7 @@ def send_gift():
     time.sleep(3)
     print("Gift Click")
 
-    gift_button = np.array([0.20185185, 0.71041667])
+    gift_button = np.array([0.5, 0.3])
     android_phone.swipe(gift_button, gift_button, True)
     time.sleep(2)
     print("Send Confirm")

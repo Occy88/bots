@@ -28,8 +28,7 @@ def main():
     m.capture_on_two_click('open_gift_page', './PokemonGo/images/FriendGifting/')
     #m.capture_on_two_click('gift_received_profile', './PokemonGo/images/FriendGifting/')
     #m.capture_on_two_click('can_send_gift_profile', './PokemonGo/images/FriendGifting/')
-
-
+    time.sleep(100)
 
 
 

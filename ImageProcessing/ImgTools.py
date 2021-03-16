@@ -62,8 +62,8 @@ def load_img(name):
 
 
 def resize_img(img, dim, percent=False):
-    print("resizeing")
-    print(img.shape,dim,percent)
+    # print("resizeing")
+    # print(img.shape,dim,percent)
     if percent:
         print(img.shape)
         wh = np.array([img.shape[0], img.shape[1]]) * dim
@@ -72,8 +72,8 @@ def resize_img(img, dim, percent=False):
     # flip the dimension. for cv2 resize
     dim=tuple(np.flip(dim[:2]))
     n=cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-    print(n.shape)
-    print("----------------------------")
+    # print(n.shape)
+    # print("----------------------------")
     return n
 
 

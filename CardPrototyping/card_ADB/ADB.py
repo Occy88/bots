@@ -9,6 +9,7 @@ import numpy as np
 import atexit
 from CardPrototyping.card_ADB.viewer import AndroidViewer
 from CardPrototyping.GenericCard import GenericCardTemplate
+from ImageProcessing.ImgTools import resize_img
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,
@@ -24,6 +25,7 @@ class ADBManager(GenericCardTemplate()):
         self.video_thread = None
         self.android = AndroidViewer()
         self.stop = True
+        self.scale_factor = .5
         atexit.register(self._shutdown)
         try:
             signal.signal(signal.SIGINT, self._shutdown)
@@ -93,7 +95,7 @@ class ADBManager(GenericCardTemplate()):
                 self.latest_frame = frame
                 self._update_dim(self.latest_frame)
                 self.do_frame_update(self.latest_frame)
-                cv2.imshow(window, frame)
+                cv2.imshow(window, resize_img(frame, self.scale_factor, True))
                 cv2.waitKey(1)
             if dt > 1:
                 f = 0
@@ -110,8 +112,8 @@ class ADBManager(GenericCardTemplate()):
 
     def __sanitize_mouse_event(self, event, x, y, flags, param):
         # logging.info(event, x, y, flags, param)
-        self.mouse_x = x
-        self.mouse_y = y
+        self.mouse_x = x / self.scale_factor
+        self.mouse_y = y / self.scale_factor
         kwargs = {'x': x, 'y': y, 'flags': flags, 'param': param, 'event': event}
         self.do_mouse_event(**kwargs)
 

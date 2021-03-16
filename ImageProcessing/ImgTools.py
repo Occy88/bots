@@ -65,7 +65,6 @@ def resize_img(img, dim, percent=False):
     # print("resizeing")
     # print(img.shape,dim,percent)
     if percent:
-        print(img.shape)
         wh = np.array([img.shape[0], img.shape[1]]) * dim
         wh = np.round(wh).astype(int)
         dim = tuple(wh)

@@ -10,7 +10,7 @@ import atexit
 from CardPrototyping.card_ADB.viewer import AndroidViewer
 from CardPrototyping.GenericCard import GenericCardTemplate
 from ImageProcessing.ImgTools import resize_img
-
+from settings import SCREEN_SCALE_FACTOR
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                     format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
@@ -25,7 +25,7 @@ class ADBManager(GenericCardTemplate()):
         self.video_thread = None
         self.android = AndroidViewer()
         self.stop = True
-        self.scale_factor = .5
+        self.scale_factor = SCREEN_SCALE_FACTOR
         atexit.register(self._shutdown)
         try:
             signal.signal(signal.SIGINT, self._shutdown)

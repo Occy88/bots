@@ -39,6 +39,7 @@ choco install pip
 4. clone the project:
 got to:
 https://github.com/Occy88/bots
+change the branch to windows.
 click on the green code tab
 click download zip
 place it in a location of your choice such as desktop and unzip it, delete the zip.

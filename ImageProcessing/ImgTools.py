@@ -6,7 +6,7 @@ import math
 import os
 import sys
 import uuid
-
+from PIL import Image
 import cv2
 import cv2 as cv
 import matplotlib.pyplot as plt
@@ -14,12 +14,6 @@ import numpy as np
 import scipy
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
-
-if sys.platform == 'win32':
-    IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
-
-else:
-    IMG_ROOT = os.getcwd() + '/'
 
 
 def crop_img(img, x, y, w, h, as_percentage=False):
@@ -59,18 +53,34 @@ def save_img(img, name, with_uuid=False, format='.png', path='images/'):
     if with_uuid:
         name += '_' + uuid.uuid4().__str__()
     name += format
-
-    cv2.imwrite(IMG_ROOT + path + name, img, )
+    print("writing to: ", path + name)
+    cv2.imwrite(path + name, img, )
 
 
 def load_img(name):
-    return cv2.imread(IMG_ROOT + name)
+    return cv2.imread(name)
+
+
+def resize_img(img, dim, percent=False):
+    # print("resizeing")
+    # print(img.shape,dim,percent)
+    if percent:
+        print(img.shape)
+        wh = np.array([img.shape[0], img.shape[1]]) * dim
+        wh = np.round(wh).astype(int)
+        dim = tuple(wh)
+    # flip the dimension. for cv2 resize
+    dim=tuple(np.flip(dim[:2]))
+    n=cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    # print(n.shape)
+    # print("----------------------------")
+    return n
 
 
 def resize_images(img_list, dim):
     resized_arr = np.empty(shape=(len(img_list), *dim))
     for i, m in enumerate(img_list):
-        resized_arr[i] = cv2.resize(m, dim[:2], interpolation=cv2.INTER_AREA)
+        resized_arr[i] = resize_img(m, dim)
     return resized_arr
 
 
@@ -128,14 +138,12 @@ def template_match_tfmodel(template, test_dim_np, preproces_func, predict_func, 
 
 
 def resize_bigger_to_smaller_img(img1, img2):
-    if len(img1) < len(img2):
-        img1 = cv2.resize(img2, fx=len(img1[0]) / len(img2[0]), fy=len(img1) / len(img2))
+    if img1.shape == img2.shape:
         return img1, img2
-    if len(img1) > len(img2):
-        img2 = cv2.resize(img2, fx=len(img2[0]) / len(img1[0]), fy=len(img2) / len(img1))
-        return img1, img2
-
-    return img1, img2
+    if np.sum(img1.shape) > np.sum(img2.shape):
+        return resize_img(img1, img2.shape), img2
+    else:
+        return img1, resize_img(img2, img1.shape)
 
 
 def get_image_difference(image_1, image_2):
@@ -155,24 +163,28 @@ def get_image_difference(image_1, image_2):
 def img_col_similarity(img1, img2):
     """
     returns similarity of two image by color:
+    using mse for now/
     summ diff/total
     :param img1:
     :param img2:
     :return:
     """
     # print(get_image_difference(img1,img2))
-    if len(img1) != len(img2):
-        print("SCALING FOR UNSIMILAR")
-        img1, img2 = resize_bigger_to_smaller_img(img1, img2)
-    # show_img(img1)
-    # show_img(img2)
-    img3 = cv2.subtract(img1, img2)
-    # print(img3[0])
-    # show_img(img3)
-    tot = 125 * np.prod(img1.shape)
-    delta = np.sum(img3)
-
-    return 1 - delta / tot
+    print("comp sim")
+    print(img1.shape,img2.shape)
+    img1, img2 = resize_bigger_to_smaller_img(img1, img2)
+    print(img1.shape,img2.shape)
+    err = np.sum((img1.astype("float") - img2.astype("float")) ** 2)
+    err /= (255 * np.prod(img1.shape))
+    # # show_img(img1)
+    # # show_img(img2)
+    # img3 = cv2.subtract(img1, img2)
+    # # print(img3[0])
+    # # show_img(img3)
+    # tot = 125 * np.prod(img1.shape)
+    # delta = np.sum(img3)
+    print(1 - err)
+    return 1 - err
 
 
 def find_peaks(p_2d_arr, threshold):

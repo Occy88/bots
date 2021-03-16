@@ -10,4 +10,4 @@ img_name='open_gift_page'
 path='../PokemonGo/images/FriendGifting/'
 gen.capture_on_two_click(img_name,path)
 # gen.test_image(path,img_name)
-time.sleep(100  )
+time.sleep(100)

@@ -22,24 +22,15 @@ choco install adb
 - instructions:
 in powershell (same one)
 execute:
-choco install python3
+python3
+this should open microsoft store, if it doesn't open it yourself
+install python3.9 (microsoft store)
 
-
-3. install pip:
-- reason: we need to install python requirements (other people's programs that help the bot)
-- result: execute pip in powershell, should et some meaningfull result
-- instructions:
-first test if it is already installed.
-in powershell execute:
-pip
-if it is installed you will see it is recognised.
-if not, execute:
-choco install pip
+3. (omitted)
 
 4. clone the project:
 got to:
 https://github.com/Occy88/bots
-change the branch to windows.
 click on the green code tab
 click download zip
 place it in a location of your choice such as desktop and unzip it, delete the zip.
@@ -65,7 +56,7 @@ ls
 you should see requirements.txt
 if you do you are in the correct location.
 execute:
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 wait for installation to end
 
 7. Run the programm:

@@ -10,13 +10,13 @@ import numpy as np
 
 # path = '../PokemonGo/images/FriendGifting/'
 path = 'PokemonGo/images/FriendGifting/'
-gen = MLPictureGen.MLPictureGen('adb')
+gen = MLPictureGen.MLPictureGen()
 
 
 def open_gift_page():
     open_page = gen.test_image(path, 'open_gift_page')
     print(open_page)
-    return open_page > 0.81
+    return open_page > 0.8
 
 
 def leave_page():
@@ -30,11 +30,11 @@ def gift_received():
     v = gen.test_image(path, 'gift_received_profile')
     print("checking recieved: ", v)
 
-    return v > 0.81
+    return v > 0.8
 
 
 def can_send():
-    return gen.test_image(path, 'can_send_gift_profile') > 0.81
+    return gen.test_image(path, 'can_send_gift_profile') > 0.7
 
 
 def change_profile():
@@ -72,7 +72,7 @@ def send_gift():
     time.sleep(3)
     print("Gift Click")
 
-    gift_button = np.array([0.20185185, 0.71041667])
+    gift_button = np.array([0.5, 0.3])
     android_phone.swipe(gift_button, gift_button, True)
     time.sleep(2)
     print("Send Confirm")

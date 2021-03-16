@@ -2,17 +2,20 @@ import uuid
 
 try:
     import keyboard
-except:
+    from keyboard import KeyboardEvent
+
+except ModuleNotFoundError:
+    keyboard = 'No Keyboard'
+    KeyboardEvent = str
     print("keyboard module not loaded")
-from keyboard import KeyboardEvent
 from CardPrototyping.card_ADB.instances_ADB import android_phone
-from ImageProcessing.ImgTools import crop_center, save_img, crop_img, show_img, img_col_similarity, load_img
+from ImageProcessing.ImgTools import crop_center, save_img, crop_img, show_img, img_col_similarity, load_img,resize_images
 import json
 import os
 
 
-class MLPictureGen():
-    def __init__(self, program_name):
+class MLPictureGen:
+    def __init__(self):
         """
 
         :param program_name:
@@ -50,33 +53,31 @@ class MLPictureGen():
             if e.name == key:
                 self.save_img()
 
-        keyboard.on_press(capture)
+        try:
+            keyboard.on_press(capture)
+        except:
+            "Keyboard module not available"
 
     def capture_on_click(self, window_name, name='default', width=100, height=100):
         self.set_img_attr(name, width, height)
         android_phone.start_capture(window_name)
         android_phone.add_click_callback(self.save_img)
 
-    def test_image(self, path, img_name):
+    def test_image(self, path, img_name, format='.png'):
         """
         Image name should be in the format: name+ | + coord 1 + coord 2 +|+bool as percent
         """
         # print(path)
         # print(os.listdir(path))
         # print("-------------")
-        img_name_with_coords = ''
-        for a in os.listdir(path):
-            if a.split("|")[0] == img_name:
-                img_name_with_coords = a
-                break
-        if img_name_with_coords == '':
-            raise Exception("Image Not Found: ", path, img_name)
+
         img = android_phone.latest_frame
+
         # show_img(img)
-        details = json.loads(img_name_with_coords.split('|')[1].replace('.png', ''))
+        details = json.loads(open(path + img_name + '.json', 'r').read())
         img = crop_img(img, *details['xy'], *details['wh'], details['as_percentage'])
         # show_img(img)
-        fp = path + img_name_with_coords
+        fp = path + img_name + format
         # print(fp)
         img2 = load_img(fp)
         # show_img(img2)
@@ -114,17 +115,18 @@ class MLPictureGen():
                     wh = ctc_second - ctc_first
                     print("w,h:", wh)
                     img = android_phone.latest_frame
-                    nm = name
                     details = dict()
                     import numpy as np
 
                     details['xy'] = ctc_first.tolist()
                     details['wh'] = wh.tolist()
                     details['as_percentage'] = as_percentage
-                    nm += '|' + json.dumps(details)
-                    save_img(crop_img(img, *ctc_first, *wh, as_percentage), nm, with_uuid=with_uuid, format=format,
+                    open(path+name + '.json', 'w').write(json.dumps(details))
+                    save_img(crop_img(img, *ctc_first, *wh, as_percentage), name, with_uuid=with_uuid,
+                             format=format,
                              path=path)
                     print('=========== IMAGE SAVED========')
+
         android_phone.do_mouse_event_complete(process_click)
 
     def print_percentages(self, key):
@@ -135,5 +137,8 @@ class MLPictureGen():
                 p_y = y / android_phone.height
                 print(p_x, p_y)
 
-        keyboard.on_press(print_val)
+        try:
+            keyboard.on_press(print_val)
+        except ModuleNotFoundError:
+            print("keyboard not imported (windows probs)")
         pass

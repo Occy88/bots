@@ -129,7 +129,8 @@ class SendGifts(GenericCardTemplate()):
                 print("Sending gift")
                 send_gift()
                 print("Changing profile")
-                change_profile()
+            change_profile()
+
         # print("initiating for: ")
         # for i in range(num_pokemon):
         #     print(i / num_pokemon, '% left: ', num_pokemon - i)

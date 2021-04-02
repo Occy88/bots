@@ -6,7 +6,7 @@ import math
 import os
 import sys
 import uuid
-
+from PIL import Image
 import cv2
 import cv2 as cv
 import matplotlib.pyplot as plt
@@ -15,26 +15,29 @@ import scipy
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 
-if sys.platform == 'win32':
-    IMG_ROOT = os.path.abspath(os.curdir).split('bots')[0] + 'bots\\'
 
-else:
-    IMG_ROOT = os.getcwd() + '/'
-
-
-def crop_img(img, x, y, w, h):
+def crop_img(img, x, y, w, h, as_percentage=False):
+    if as_percentage:
+        t_h = len(img)
+        t_w = len(img[0])
+        x = int(t_w * x)
+        y = int(t_h * y)
+        w = int(t_w * w)
+        h = int(t_h * h)
     crop_img = img[y:y + h, x:x + w]
     return crop_img
 
 
-def crop_img_percent(img, x, y, w, h):
-    t_h = len(img)
-    t_w = len(img[0])
-    p_x = int(t_w * x)
-    p_y = int(t_h * y)
-    p_w = int(t_w * w)
-    p_h = int(t_h * h)
-    return crop_img(img, p_x, p_y, p_w, p_h)
+# def crop_img_percent(img, x, y, w, h):
+#     return crop_img(img, p_x, p_y, p_w, p_h)
+
+
+def crop_img_two_coords(img, x1, y1, x2, y2, as_percentage=False):
+    x = x1
+    y = y1
+    w = x2 - x1
+    h = y2 - y1
+    return crop_img(img, x, y, w, h, as_percentage)
 
 
 def save_img(img, name, with_uuid=False, format='.png', path='images/'):
@@ -50,18 +53,33 @@ def save_img(img, name, with_uuid=False, format='.png', path='images/'):
     if with_uuid:
         name += '_' + uuid.uuid4().__str__()
     name += format
-
-    cv2.imwrite(IMG_ROOT + path + name, img, )
+    print("writing to: ", path + name)
+    cv2.imwrite(path + name, img, )
 
 
 def load_img(name):
-    return cv2.imread(IMG_ROOT + name)
+    return cv2.imread(name)
+
+
+def resize_img(img, dim, percent=False):
+    # print("resizeing")
+    # print(img.shape,dim,percent)
+    if percent:
+        wh = np.array([img.shape[0], img.shape[1]]) * dim
+        wh = np.round(wh).astype(int)
+        dim = tuple(wh)
+    # flip the dimension. for cv2 resize
+    dim=tuple(np.flip(dim[:2]))
+    n=cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    # print(n.shape)
+    # print("----------------------------")
+    return n
 
 
 def resize_images(img_list, dim):
     resized_arr = np.empty(shape=(len(img_list), *dim))
     for i, m in enumerate(img_list):
-        resized_arr[i] = cv2.resize(m, dim[:2], interpolation=cv2.INTER_AREA)
+        resized_arr[i] = resize_img(m, dim)
     return resized_arr
 
 
@@ -75,7 +93,6 @@ def load_dir(file_regx, img_dim):
 
 
 def show_img(img):
-    print("SHOWING IMAGE")
     plt.imshow(img)
     plt.show()
 
@@ -119,17 +136,54 @@ def template_match_tfmodel(template, test_dim_np, preproces_func, predict_func, 
     return pict
 
 
+def resize_bigger_to_smaller_img(img1, img2):
+    if img1.shape == img2.shape:
+        return img1, img2
+    if np.sum(img1.shape) > np.sum(img2.shape):
+        return resize_img(img1, img2.shape), img2
+    else:
+        return img1, resize_img(img2, img1.shape)
+
+
+def get_image_difference(image_1, image_2):
+    first_image_hist = cv2.calcHist([image_1], [0], None, [256], [0, 256])
+    second_image_hist = cv2.calcHist([image_2], [0], None, [256], [0, 256])
+
+    img_hist_diff = cv2.compareHist(first_image_hist, second_image_hist, cv2.HISTCMP_BHATTACHARYYA)
+    img_template_probability_match = \
+        cv2.matchTemplate(first_image_hist, second_image_hist, cv2.TM_CCOEFF_NORMED)[0][0]
+    img_template_diff = 1 - img_template_probability_match
+
+    # taking only 10% of histogram diff, since it's less accurate than template method
+    commutative_image_diff = (img_hist_diff / 10) + img_template_diff
+    return commutative_image_diff
+
+
 def img_col_similarity(img1, img2):
     """
     returns similarity of two image by color:
+    using mse for now/
     summ diff/total
     :param img1:
     :param img2:
     :return:
     """
-    delta = np.sum(np.abs(img1 - img2))
-    tot = 255 * np.prod(img1.shape)
-    return delta / tot
+    # print(get_image_difference(img1,img2))
+    print("comp sim")
+    print(img1.shape,img2.shape)
+    img1, img2 = resize_bigger_to_smaller_img(img1, img2)
+    print(img1.shape,img2.shape)
+    err = np.sum((img1.astype("float") - img2.astype("float")) ** 2)
+    err /= (255 * np.prod(img1.shape))
+    # # show_img(img1)
+    # # show_img(img2)
+    # img3 = cv2.subtract(img1, img2)
+    # # print(img3[0])
+    # # show_img(img3)
+    # tot = 125 * np.prod(img1.shape)
+    # delta = np.sum(img3)
+    print(1 - err)
+    return 1 - err
 
 
 def find_peaks(p_2d_arr, threshold):
@@ -247,9 +301,9 @@ class TfImageFinder:
         offset = self.match_np_dim / 2
         print(offset)
         peaks += offset.astype(int)[:-1]
-        show_img(test_img)
-        show_img(pict)
-        show_img(pict_peaks[0])
+        # show_img(test_img)
+        # show_img(pict)
+        # show_img(pict_peaks[0])
         return pict, peaks
 
 

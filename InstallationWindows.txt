@@ -1,0 +1,73 @@
+Instructions to get started on windows, we will be using the powershell but don't worry it's mostly copy pasting.
+Any issues let me know, but it should be quire straight forward ;D
+1. install chocolatey:
+- reason: this is to make installation of python/ packages easier.
+- result: when you enter choco into terminal, there should be some meaningful output.
+(it's very easy, just follow instructions)
+- link to instruction: https://chocolatey.org/install
+
+1.1. install adb:
+- reason: we use this to communicate with the phone
+- result: when phone is plugged in if you execute:
+adb shell
+you should see a popup on the phone asking you to accept
+when you do, the powershell should not throw an error, you can type exit to leave adb.
+- instructions:
+execute:
+choco install adb
+
+2. install python:
+- reason: program is written in python, need it to execute the bot.
+- result: execute python in powershell, you should get a python shell
+- instructions:
+in powershell (same one)
+execute:
+python3
+this should open microsoft store, if it doesn't open it yourself
+install python3.9 (microsoft store)
+
+3. (omitted)
+
+4. clone the project:
+got to:
+https://github.com/Occy88/bots
+click on the green code tab
+click download zip
+place it in a location of your choice such as desktop and unzip it, delete the zip.
+
+5. navigate to the project in powershell.
+instructions:
+some simple comands in powershell:
+pwd -tells you where you are
+ls -lists everything in your current location.
+cd -navigates to a directory e.g.: cd Desktop
+
+one method of navigating to the project:
+open the project in file explorer, copy the project path
+execute:
+cd project_path
+(replace project_path with what you copied)
+
+
+6. install requirements:
+in powershell (in project)
+execute:
+ls
+you should see requirements.txt
+if you do you are in the correct location.
+execute:
+pip3 install -r requirements.txt
+wait for installation to end
+
+7. Run the programm:
+in powershell:
+you should be in the root of the project
+plug in your phone, make sure adb works but is not running.
+open pokemon go
+go to friends list
+order friends by can recieve
+open first friend's profile in list.
+execute:
+python3 playground.py
+
+you should see your phone's screen show up on the laptop.

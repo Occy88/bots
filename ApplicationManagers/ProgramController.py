@@ -4,7 +4,7 @@ try:
     from CardPrototyping.card_Windows.Windows import Win32Wrapper as program
 except Exception as e:
     print("NOT WINDOWS, ASSUMING ADB.")
-    from CardPrototyping.card_ADB.instances_ADB import android_phone
+    from CardPrototyping.card_ADB.instances_ADB import android_phone as program
 import psutil
 
 PROGRAM_NAME = 'scrcpy.exe'
@@ -15,11 +15,11 @@ test = 'Device Manager'
 class ProgramController:
     def __init__(self, program_title):
         print('initiating program')
-        self.program = program(program_title)
+
+        self.program = program
         self.options = {
             '0': ('quit', lambda: None),
-            '1': ('start preview', self.program.start_capture),
-
+            '1': ('start preview', self.program),
         }
 
     def run(self):

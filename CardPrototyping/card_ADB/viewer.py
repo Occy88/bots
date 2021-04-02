@@ -6,10 +6,14 @@ import subprocess
 import sys
 from queue import Queue
 from time import sleep
-
 import av
 
 from CardPrototyping.card_ADB.control import ControlMixin
+
+if os.name == 'nt':
+    adb_path = 'C:\ProgramData\chocolatey\\bin\\adb'
+else:
+    adb_path = '/usr/bin/adb'
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,
@@ -24,7 +28,7 @@ class AndroidViewer(ControlMixin):
 
     video_data_queue = Queue()
 
-    def __init__(self, max_width=0, bitrate=8000000, max_fps=30, adb_path='/usr/bin/adb',
+    def __init__(self, max_width=0, bitrate=8000000, max_fps=30, adb_path=adb_path,
                  ip='127.0.0.1', port=8081):
         """
         :param max_width: frame width that will be broadcast from android server

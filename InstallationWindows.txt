@@ -5,6 +5,9 @@ Any issues let me know, but it should be quire straight forward ;D
 - result: when you enter choco into terminal, there should be some meaningful output.
 (it's very easy, just follow instructions)
 - link to instruction: https://chocolatey.org/install
+-Express instructions:
+execute the following in admin powershell:
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 1.1. install adb:
 - reason: we use this to communicate with the phone
@@ -13,7 +16,7 @@ adb shell
 you should see a popup on the phone asking you to accept
 when you do, the powershell should not throw an error, you can type exit to leave adb.
 - instructions:
-execute:
+admin powershell execute:
 choco install adb
 
 2. install python:

@@ -51,12 +51,27 @@ class ADBManager(GenericCardTemplate()):
         os.popen("adb shell wm size reset")
 
     def do_mouse_event(self, x=0, y=0, flags=0, **kwargs):
+
         pass
 
     def do_frame_update(self, img: np.ndarray):
         pass
 
-    def swipe(self, xy_from: np.ndarray, xy_to: np.ndarray, as_percent=False):
+    def hold(self, xy: np.ndarray, as_percent=True):
+        if as_percent:
+            xy = self.to_percent(xy)
+        self.android.hold(*xy)
+        pass
+
+    def release(self, xy, as_percent=True):
+        if as_percent:
+            xy = self.to_percent(xy)
+        self.android.release(*xy)
+
+    def to_percent(self, xy):
+        return np.array([self.width, self.height]) * xy
+
+    def swipe(self, xy_from: np.ndarray, xy_to: np.ndarray, as_percent=True, step_pixels=5, step_delay=0.05):
         """
         Swipe or click event
         (from==to -> click)
@@ -66,11 +81,10 @@ class ADBManager(GenericCardTemplate()):
         """
 
         if as_percent:
-            t = np.array([self.width, self.height])
-            xy_from = t * xy_from
-            xy_to = t * xy_to
+            xy_from = self.to_percent(xy_from)
+            xy_to = self.to_percent(xy_to)
         logging.info("Adb Swipe message Recieved: " + str(xy_from) + str(xy_to))
-        self.android.swipe(*xy_from, *xy_to)
+        self.android.swipe(*xy_from, *xy_to, step_pixels=step_pixels, step_delay=step_delay)
 
     def _shutdown(self, *args):
         logging.info('Shutdown Signal Recieved: ', args)
@@ -134,7 +148,7 @@ class ADBManager(GenericCardTemplate()):
         # logging.info(event, x, y, flags, param)
         self.mouse_x = x / self.scale_factor
         self.mouse_y = y / self.scale_factor
-        kwargs = {'x': x, 'y': y, 'flags': flags, 'param': param, 'event': event}
+        kwargs = {'x': self.mouse_x, 'y': self.mouse_y, 'flags': flags, 'param': param, 'event': event}
         self.do_mouse_event(**kwargs)
 
     def _get_mouse_pos(self):

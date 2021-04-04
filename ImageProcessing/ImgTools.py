@@ -8,7 +8,6 @@ import sys
 import uuid
 from PIL import Image
 import cv2
-import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
@@ -69,8 +68,8 @@ def resize_img(img, dim, percent=False):
         wh = np.round(wh).astype(int)
         dim = tuple(wh)
     # flip the dimension. for cv2 resize
-    dim=tuple(np.flip(dim[:2]))
-    n=cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    dim = tuple(np.flip(dim[:2]))
+    n = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
     # print(n.shape)
     # print("----------------------------")
     return n
@@ -159,6 +158,37 @@ def get_image_difference(image_1, image_2):
     return commutative_image_diff
 
 
+def find_circles(img, radius_range=np.array([0, 1]), area=np.array([0, 0, 0, 1]), as_percent=True):
+    img2 = crop_img(img, *area, as_percentage=as_percent)
+    # img2 = threshold(img2, np.array([200, 200, 200]), np.array([255, 255, 255]))
+
+    gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    show_img(gray)
+    try:
+        circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100)[0]
+    except Exception as e:
+        print("None Found")
+        return []
+    min_r = radius_range[0] * img.shape[1]
+    max_r = radius_range[1] * img.shape[1]
+
+    circles = circles.astype(int)
+    circles += np.array([area[0] * img.shape[1], area[1] * img.shape[0], 0]).astype(int)
+    circles = circles.astype(int)
+    for (x, y, r) in circles:
+        # draw the circle in the output image, then draw a rectangle
+        # corresponding to the center of the circle
+        cv2.circle(img, (x, y), r, (255, 0, 0), 4)
+        cv2.rectangle(img, (x - 5, y - 5), (x + 5, y + 5), (255, 128, 0), -1)
+    show_img(img)
+    print("IMAGE SHOWN: ",len(circles))
+    circles = circles[circles[:, 2] > min_r]
+    circles = circles[circles[:, 2] < max_r]
+    print(len(circles))
+    for c in circles:
+        print(c)
+    return circles
+
 def img_col_similarity(img1, img2):
     """
     returns similarity of two image by color:
@@ -170,9 +200,9 @@ def img_col_similarity(img1, img2):
     """
     # print(get_image_difference(img1,img2))
     print("comp sim")
-    print(img1.shape,img2.shape)
+    print(img1.shape, img2.shape)
     img1, img2 = resize_bigger_to_smaller_img(img1, img2)
-    print(img1.shape,img2.shape)
+    print(img1.shape, img2.shape)
     err = np.sum((img1.astype("float") - img2.astype("float")) ** 2)
     err /= (255 * np.prod(img1.shape))
     # # show_img(img1)
@@ -221,26 +251,33 @@ def find_peaks(p_2d_arr, threshold):
     return scipy.ndimage.measurements.label(detected_peaks)
 
 
+def threshold(img, threshold_lower, threshold_upper):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    mask = cv2.inRange(img, threshold_lower, threshold_upper)
+    mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+    return img & mask_rgb
+
+
 def template_match(small_img, large_img):
     w2, h2 = large_img.shape[0], large_img.shape[1]
     w, h = small_img.shape[0], small_img.shape[1]
 
     img = small_img.copy()
-    method = cv.TM_CCOEFF
+    method = cv2.TM_CCOEFF
     # Apply template Matching
 
-    res = cv.matchTemplate(small_img, large_img, cv.TM_CCOEFF_NORMED)
+    res = cv2.matchTemplate(small_img, large_img, cv2.TM_CCOEFF_NORMED)
     threshold = 0.8
     loc = np.where(res >= threshold)
     return res
     # # print(w,h)
     # # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
-    # if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
+    # if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
     #     top_left = min_loc
     # else:
     #     top_left = max_loc
     # bottom_right = (top_left[0] + w, top_left[1] + h)
-    # cv.rectangle(img, top_left, bottom_right, 255, 2)
+    # cv2.rectangle(img, top_left, bottom_right, 255, 2)
     # plt.subplot(121), plt.imshow(res, cmap='gray')
     # plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
     # plt.subplot(122), plt.imshow(img, cmap='gray')

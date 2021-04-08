@@ -14,9 +14,10 @@ gen = MLPictureGen.MLPictureGen()
 
 
 def open_gift_page():
-    open_page = gen.test_image(path, 'open_gift_page')
-    print(open_page)
-    return open_page > 0.8
+    print("============[ Checking gift can be opened ]===========")
+    v = gen.test_image(path, 'open_gift_page')
+    print("value: ", v)
+    return v > 0.8
 
 
 def leave_page():
@@ -27,62 +28,77 @@ def leave_page():
 
 
 def gift_received():
+    print("============[ Checking if gift was received ]===========")
     v = gen.test_image(path, 'gift_received_profile')
-    print("checking recieved: ", v)
-
+    print("value: ", v)
     return v > 0.8
 
 
 def can_send():
-    return gen.test_image(path, 'can_send_gift_profile') > 0.7
+    print("============[ Checking if gift can be sent ]===========")
+    v = gen.test_image(path, 'can_send_gift_profile')
+    print("value: ", v)
+
+    return v > 0.7
 
 
 def change_profile():
-    android_phone.swipe(np.array([0.93518519, 0.64333333]), np.array([0.1537037, 0.64458333]), True)
-    time.sleep(5)
+    print("============[ NEXT PROFILE ]===========")
+    android_phone.swipe(np.array([0.93518519, 0.8]), np.array([0.1537037, 0.8]), True, step_pixels=10, step_delay=0.02)
+    time.sleep(2)
     pass
 
 
 def click_wabble_gift():
-    rand = np.array([0.16759259, 0.6225])
+    rand = np.array([0.5, 0.5])
     print("Random Click")
     android_phone.swipe(rand, rand, True)
-    time.sleep(5)
+    time.sleep(3)
 
 
 def open_gift():
     click_wabble_gift()
     print("Open Click")
-    open = np.array([0.39259259, 0.77833333])
+
+    open = np.array([0.5, 0.75])
 
     android_phone.swipe(open, open, True)
-    time.sleep(4)
-    print("Open Click")
     time.sleep(2)
+    print("Open Click")
+    time.sleep(1)
     if open_gift_page():
         print("GIFT LIMIT REACHED .....")
         leave_page()
         return False
     android_phone.swipe(open, open, True)
-    time.sleep(14)
+    time.sleep(0.3)
+    android_phone.swipe(open, open, True)
+    time.sleep(0.2)
+    android_phone.swipe(open, open, True)
+    time.sleep(0.2)
+    android_phone.swipe(open, open, True)
+    time.sleep(0.2)
+    android_phone.swipe(open, open, True)
+    time.sleep(5)
     return True
 
 
 def send_gift():
     print("Send Click")
-    send_button = np.array([0.20185185, 0.71041667])
+    send_button = np.array([0.20185185, 0.85])
     android_phone.swipe(send_button, send_button, True)
     time.sleep(3)
     print("Gift Click")
 
-    gift_button = np.array([0.5, 0.3])
+    gift_button = np.array([0.5, 0.35])
     android_phone.swipe(gift_button, gift_button, True)
     time.sleep(2)
     print("Send Confirm")
-    send_confirm = np.array([0.47037037, 0.79625])
+    send_confirm = np.array([0.5, 0.78])
+    android_phone.swipe(send_confirm, send_confirm, True)
 
     android_phone.swipe(send_confirm, send_confirm, True)
-    time.sleep(7)
+    time.sleep(5)
 
 
 step1 = (130, 450)
@@ -100,6 +116,7 @@ import time
 class SendGifts(GenericCardTemplate()):
     def __init__(self, name):
         super().__init__(self)
+        android_phone.set_resolution()
         self.name = name
 
     def print_click(self, *args, **kwargs):
@@ -121,19 +138,21 @@ class SendGifts(GenericCardTemplate()):
         update_img_from_details(android_phone.latest_frame, images[1], images_path)
         print("CAPTURED...")
         print("CLICKING TO ACCEPT GIFT...")
+        click_wabble_gift()
         time.sleep(2)
-
         print("EXPECTED TO BE ON PAGE WHERE YOU CAN OPEN THE GIFT...")
         update_img_from_details(android_phone.latest_frame, images[0], images_path)
         print("IMAGE CAPTURED... LEAVING PAGE TO PROFILE PAGE")
         leave_page()
+        time.sleep(1)
         print("EXPECTING TO BE ON PROFILE PAGE...")
         print("EXPECTING GIFT IS NOT SENT (COLOURFUL)")
         update_img_from_details(android_phone.latest_frame, images[2], images_path)
         print("CALIBRATION COMPLETE...")
+
     def do_send_gifts(self):
         print("initiating transfer routine in 10s")
-        time.sleep(10)
+        time.sleep(1)
         limit_reached = False
 
         while True:
@@ -141,15 +160,10 @@ class SendGifts(GenericCardTemplate()):
                 if limit_reached:
                     leave_page()
                 else:
-                    print("Gift Received")
-                    print("Opening Gift")
                     limit_reached = not open_gift()
-
             if can_send():
                 # break
-                print("Sending gift")
                 send_gift()
-                print("Changing profile")
             change_profile()
 
         # print("initiating for: ")

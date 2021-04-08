@@ -1,10 +1,10 @@
-from ImageProcessing.MLPictureGen import MLPictureGen
-# from ImageProcessing.ImgTools import img_col_similarity, crop_img
+# from PokemonGo.DetectPokestop import pokestop_detector
+# from CardPrototyping.Functions import modify_text
+# from CardPrototyping.card_ReceiveProcessText.instances_ReceiveText import tell_humans
 # from CardPrototyping.card_ADB.instances_ADB import android_phone
-
+# from PokemonGo.DetectPokestop import find_locations
+from CardPrototyping.card_CatchPokemon.CatchPokemon import CatchPokemon
 import time
-
-
 # from CardPrototyping.card_ADB.instances_ADB import  android_phone
 def main():
     # print("+++++++++++++SENT SIGNAL TO PROCESS TEXT+++++++++++")
@@ -14,28 +14,13 @@ def main():
     #
     #
     # input("enter to stop")
-    from ImageProcessing.ImgTools import load_img, show_img, resize_img, resize_bigger_to_smaller_img, img_col_similarity
-    # show_img(orig)
-    #
-    # res = resize_img(orig, 0.7, percent=True)
-    # show_img(res)
-    # orig, res = resize_bigger_to_smaller_img(orig, res)
-    # show_img(orig)
-    # show_img(res)
-    # print(img_col_similarity(orig,res))
 
-    m = MLPictureGen()
+    t = CatchPokemon("some name")
 
-    # m.capture_on_two_click('open_gift_page', './PokemonGo/images/FriendGifting/')
-    # m.capture_on_two_click('gift_received_profile', './PokemonGo/images/FriendGifting/')
-    #m.capture_on_two_click('can_send_gift_profile', './PokemonGo/images/FriendGifting/')
+    # android_phone.do_mouse_event_complete(t.print_click)
+    t.catch_pokemon()
+    # t.do_transfer(5)
     time.sleep(100)
-
-
-
-    # while True:
-    #     m.test_image('./PokemonGo/images/FriendGifting/', 'can_send_gift_profile')
-    # time.sleep(100)
 
 
 if __name__ == '__main__':

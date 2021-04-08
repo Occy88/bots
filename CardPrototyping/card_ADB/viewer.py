@@ -9,11 +9,19 @@ from time import sleep
 import av
 
 from CardPrototyping.card_ADB.control import ControlMixin
+from sys import platform
 
-if os.name == 'nt':
-    adb_path = 'C:\ProgramData\chocolatey\\bin\\adb'
-else:
+if platform == "linux" or platform == "linux2":
     adb_path = '/usr/bin/adb'
+    print(f"DETECTED LINUX OS adb path={adb_path}")
+
+elif platform == "darwin":
+    adb_path = '/usr/local/bin/adb'
+    print(f"DETECTED MAC OS adb path={adb_path}")
+
+elif platform == "win32":
+    adb_path = 'C:\ProgramData\chocolatey\\bin\\adb'
+    print(f"DETECTED WINDOWS OS adb path={adb_path}")
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,

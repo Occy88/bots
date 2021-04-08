@@ -9,8 +9,9 @@ import numpy as np
 import atexit
 from CardPrototyping.card_ADB.viewer import AndroidViewer
 from CardPrototyping.GenericCard import GenericCardTemplate
-from ImageProcessing.ImgTools import resize_img
+from ImageProcessing.ImgTools import resize_img, crop_img
 from settings import SCREEN_SCALE_FACTOR
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                     format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
@@ -20,6 +21,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO,
 class ADBManager(GenericCardTemplate()):
     def __init__(self):
         super().__init__()
+        self.adjusted_resolution = None
         self.latest_frame = None
         logging.info('Bind methods generated')
         self.video_thread = None
@@ -35,14 +37,41 @@ class ADBManager(GenericCardTemplate()):
             signal.signal(signal.SIGHUP, self._shutdown)
         except Exception as e:
             pass
+        time.sleep(2)
+    def set_resolution(self, res=np.array([1080, 1920])):
+        # adb shell wm size reset
+        # adb shell wm density reset
+        # adb shell wm size 1080x1920
+        self.adjusted_resolution = res
+        cmd = "adb shell wm size " + 'x'.join(res.astype(str))
+        print(cmd)
+        os.popen(cmd)
+        time.sleep(2)
+    def reset_resolution(self):
+        os.popen("adb shell wm size reset")
 
     def do_mouse_event(self, x=0, y=0, flags=0, **kwargs):
+
         pass
 
     def do_frame_update(self, img: np.ndarray):
         pass
 
-    def swipe(self, xy_from: np.ndarray, xy_to: np.ndarray, as_percent=False):
+    def hold(self, xy: np.ndarray, as_percent=True):
+        if as_percent:
+            xy = self.to_percent(xy)
+        self.android.hold(*xy)
+        pass
+
+    def release(self, xy, as_percent=True):
+        if as_percent:
+            xy = self.to_percent(xy)
+        self.android.release(*xy)
+
+    def to_percent(self, xy):
+        return np.array([self.width, self.height]) * xy
+
+    def swipe(self, xy_from: np.ndarray, xy_to: np.ndarray, as_percent=True, step_pixels=5, step_delay=0.05):
         """
         Swipe or click event
         (from==to -> click)
@@ -52,18 +81,19 @@ class ADBManager(GenericCardTemplate()):
         """
 
         if as_percent:
-            t = np.array([self.width, self.height])
-            xy_from = t * xy_from
-            xy_to = t * xy_to
+            xy_from = self.to_percent(xy_from)
+            xy_to = self.to_percent(xy_to)
         logging.info("Adb Swipe message Recieved: " + str(xy_from) + str(xy_to))
-        self.android.swipe(*xy_from, *xy_to)
+        self.android.swipe(*xy_from, *xy_to, step_pixels=step_pixels, step_delay=step_delay)
 
     def _shutdown(self, *args):
         logging.info('Shutdown Signal Recieved: ', args)
+        logging.info('Cleaning up')
+        self.reset_resolution()
+
         self.stop = True
         self.android.close_all_sockets()
         logging.info("SHUTDOWN CALLED")
-        time.sleep(5)
         logging.info("SLEEP COMPLETE")
         exit(0)
         return
@@ -92,7 +122,10 @@ class ADBManager(GenericCardTemplate()):
 
             for frame in frames:
                 f += 1
+                if self.adjusted_resolution is not None:
+                    frame = crop_img(frame, 0, 0, *self.adjusted_resolution)
                 self.latest_frame = frame
+
                 self._update_dim(self.latest_frame)
                 self.do_frame_update(self.latest_frame)
                 cv2.imshow(window, resize_img(frame, self.scale_factor, True))
@@ -114,7 +147,7 @@ class ADBManager(GenericCardTemplate()):
         # logging.info(event, x, y, flags, param)
         self.mouse_x = x / self.scale_factor
         self.mouse_y = y / self.scale_factor
-        kwargs = {'x': x, 'y': y, 'flags': flags, 'param': param, 'event': event}
+        kwargs = {'x': self.mouse_x, 'y': self.mouse_y, 'flags': flags, 'param': param, 'event': event}
         self.do_mouse_event(**kwargs)
 
     def _get_mouse_pos(self):

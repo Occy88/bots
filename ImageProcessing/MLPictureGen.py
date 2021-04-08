@@ -86,8 +86,6 @@ class MLPictureGen:
         # print(sim)
         return sim
 
-
-
     def capture_on_two_click(self, name, path, as_percentage=True, with_coords=True, with_uuid=False, format='.png'):
         """
         Click first time for top left corner,

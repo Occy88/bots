@@ -4,7 +4,7 @@ print(os.getcwd())
 
 from CardPrototyping.GenericCard import GenericCardTemplate
 from CardPrototyping.card_ADB.instances_ADB import android_phone
-from ImageProcessing.ImgTools import img_col_similarity
+from ImageProcessing.ImgTools import img_col_similarity, update_img_from_details
 from ImageProcessing import MLPictureGen
 import numpy as np
 
@@ -43,25 +43,28 @@ def change_profile():
     pass
 
 
-def open_gift():
+def click_wabble_gift():
     rand = np.array([0.16759259, 0.6225])
     print("Random Click")
     android_phone.swipe(rand, rand, True)
     time.sleep(5)
-    print("Open Click")
 
+
+def open_gift():
+    click_wabble_gift()
+    print("Open Click")
     open = np.array([0.39259259, 0.77833333])
 
     android_phone.swipe(open, open, True)
     time.sleep(4)
     print("Open Click")
-    time.sleep(1)
+    time.sleep(2)
     if open_gift_page():
         print("GIFT LIMIT REACHED .....")
         leave_page()
         return False
     android_phone.swipe(open, open, True)
-    time.sleep(15)
+    time.sleep(14)
     return True
 
 
@@ -110,6 +113,24 @@ class SendGifts(GenericCardTemplate()):
     def next_profile(self):
         android_phone.swipe()
 
+    def calibrate(self):
+        images_path = './PokemonGo/images/FriendGifting/'
+        images = ['open_gift_page', 'gift_received_profile', 'can_send_gift_profile']
+        print("CALIBRATING:")
+        print("EXPECTED TO BE ON PAGE WHERE GIFT IS RECIEVED FROM FRIEND AND IT WOBBLES")
+        update_img_from_details(android_phone.latest_frame, images[1], images_path)
+        print("CAPTURED...")
+        print("CLICKING TO ACCEPT GIFT...")
+        time.sleep(2)
+
+        print("EXPECTED TO BE ON PAGE WHERE YOU CAN OPEN THE GIFT...")
+        update_img_from_details(android_phone.latest_frame, images[0], images_path)
+        print("IMAGE CAPTURED... LEAVING PAGE TO PROFILE PAGE")
+        leave_page()
+        print("EXPECTING TO BE ON PROFILE PAGE...")
+        print("EXPECTING GIFT IS NOT SENT (COLOURFUL)")
+        update_img_from_details(android_phone.latest_frame, images[2], images_path)
+        print("CALIBRATION COMPLETE...")
     def do_send_gifts(self):
         print("initiating transfer routine in 10s")
         time.sleep(10)

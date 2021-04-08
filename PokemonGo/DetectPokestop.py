@@ -39,8 +39,6 @@ def clean_img(img_list):
     return img_list
 
 
-def preprocessor(X):
-    return preprocess_images(X, (32, 32, 3), clean_img)
 
 
 pokestop_detector = TfImageFinder(

@@ -69,8 +69,8 @@ def resize_img(img, dim, percent=False):
         wh = np.round(wh).astype(int)
         dim = tuple(wh)
     # flip the dimension. for cv2 resize
-    dim=tuple(np.flip(dim[:2]))
-    n=cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    dim = tuple(np.flip(dim[:2]))
+    n = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
     # print(n.shape)
     # print("----------------------------")
     return n
@@ -170,9 +170,9 @@ def img_col_similarity(img1, img2):
     """
     # print(get_image_difference(img1,img2))
     print("comp sim")
-    print(img1.shape,img2.shape)
+    print(img1.shape, img2.shape)
     img1, img2 = resize_bigger_to_smaller_img(img1, img2)
-    print(img1.shape,img2.shape)
+    print(img1.shape, img2.shape)
     err = np.sum((img1.astype("float") - img2.astype("float")) ** 2)
     err /= (255 * np.prod(img1.shape))
     # # show_img(img1)
@@ -184,6 +184,16 @@ def img_col_similarity(img1, img2):
     # delta = np.sum(img3)
     print(1 - err)
     return 1 - err
+
+
+def update_img_from_details(img_update_from, img_name, path, format='.png'):
+    img = img_update_from
+
+    # show_img(img)
+
+    details = json.loads(open(path + img_name + '.json', 'r').read())
+    img = crop_img(img, *details['xy'], *details['wh'], details['as_percentage'])
+    save_img(img, img_name, format=format, path=path)
 
 
 def find_peaks(p_2d_arr, threshold):

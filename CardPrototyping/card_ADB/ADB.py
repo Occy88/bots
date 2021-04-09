@@ -38,17 +38,23 @@ class ADBManager(GenericCardTemplate()):
         except Exception as e:
             pass
         time.sleep(2)
+
     def set_resolution(self, res=np.array([1080, 1920])):
         # adb shell wm size reset
-        # adb shell wm density reset
+        # adb shell wm density resetpytho
         # adb shell wm size 1080x1920
         self.adjusted_resolution = res
-        cmd = "adb shell wm size " + 'x'.join(res.astype(str))
-        print(cmd)
-        os.popen(cmd)
+        self.exec_adb_command(f'wm size ' + 'x'.join(res.astype(str)))
         time.sleep(2)
+
     def reset_resolution(self):
-        os.popen("adb shell wm size reset")
+        self.exec_adb_command('wm size reset')
+
+    def set_full_screen(self, app_ref='com.nianticlabs.pokemongo'):
+        self.exec_adb_command(f'settings put global policy_control immersive.full={app_ref}')
+
+    def exec_adb_command(self, cmd):
+        os.popen(f'adb shell {cmd}')
 
     def do_mouse_event(self, x=0, y=0, flags=0, **kwargs):
 

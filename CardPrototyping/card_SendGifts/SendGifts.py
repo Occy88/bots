@@ -12,7 +12,7 @@ import numpy as np
 path = 'PokemonGo/images/FriendGifting/'
 gen = MLPictureGen.MLPictureGen()
 
-
+dbg_btn=np.array([0,0.1])
 def open_gift_page():
     print("============[ Checking gift can be opened ]===========")
     v = gen.test_image(path, 'open_gift_page')
@@ -22,7 +22,7 @@ def open_gift_page():
 
 def leave_page():
     print("LEAVINNG PAGE")
-    btn = np.array([0.50462963, 0.87575])
+    btn = np.array([0.5, 0.9])
     android_phone.swipe(btn, btn, True)
     time.sleep(1)
 
@@ -60,7 +60,8 @@ def open_gift():
     click_wabble_gift()
     print("Open Click")
 
-    open = np.array([0.5, 0.75])
+    open = np.array([0.5, 0.80])
+
 
     android_phone.swipe(open, open, True)
     time.sleep(2)
@@ -94,7 +95,7 @@ def send_gift():
     android_phone.swipe(gift_button, gift_button, True)
     time.sleep(2)
     print("Send Confirm")
-    send_confirm = np.array([0.5, 0.78])
+    send_confirm = np.array([0.5, 0.83])
     android_phone.swipe(send_confirm, send_confirm, True)
 
     android_phone.swipe(send_confirm, send_confirm, True)
@@ -117,6 +118,7 @@ class SendGifts(GenericCardTemplate()):
     def __init__(self, name):
         super().__init__(self)
         android_phone.set_resolution()
+        android_phone.set_full_screen('com.nianticlabs.pokemongo')
         self.name = name
 
     def print_click(self, *args, **kwargs):

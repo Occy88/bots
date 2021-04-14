@@ -38,7 +38,8 @@ def can_send():
 
 
 def change_profile():
-    android_phone.swipe(np.array([0.93518519, 0.8]), np.array([0.1537037, 0.8]), True)
+    android_phone.swipe(np.array([0.93518519, 0.8]), np.array([0.1537037, 0.8]), as_percent=True, step_pixels=10,
+                        step_delay=0.01)
     time.sleep(2)
     pass
 

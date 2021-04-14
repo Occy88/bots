@@ -79,7 +79,6 @@ class ADBManager(GenericCardTemplate()):
         :param xy_to:
         :return:
         """
-
         if as_percent:
             xy_from = self.to_percent(xy_from)
             xy_to = self.to_percent(xy_to)

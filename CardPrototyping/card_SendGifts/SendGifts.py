@@ -22,7 +22,7 @@ def open_gift_page():
 
 def leave_page():
     print("LEAVINNG PAGE")
-    btn = np.array([0.5, 0.9])
+    btn = np.array([0.5, 0.96])
     android_phone.swipe(btn, btn, True)
     time.sleep(1)
 
@@ -44,7 +44,7 @@ def can_send():
 
 def change_profile():
     print("============[ NEXT PROFILE ]===========")
-    android_phone.swipe(np.array([0.93518519, 0.8]), np.array([0.1537037, 0.8]), True, step_pixels=10, step_delay=0.02)
+    android_phone.swipe(np.array([0.93518519, 0.86]), np.array([0.1537037, 0.86]), True, step_pixels=10, step_delay=0.02)
     time.sleep(2)
     pass
 
@@ -60,7 +60,7 @@ def open_gift():
     click_wabble_gift()
     print("Open Click")
 
-    open = np.array([0.5, 0.80])
+    open = np.array([0.5, 0.86])
 
 
     android_phone.swipe(open, open, True)

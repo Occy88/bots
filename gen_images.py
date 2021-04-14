@@ -1,7 +1,8 @@
 from ImageProcessing.MLPictureGen import MLPictureGen
 # from ImageProcessing.ImgTools import img_col_similarity, crop_img
-# from CardPrototyping.card_ADB.instances_ADB import android_phone
+from CardPrototyping.card_ADB.instances_ADB import android_phone
 
+android_phone.set_resolution()
 import time
 
 
@@ -14,7 +15,8 @@ def main():
     #
     #
     # input("enter to stop")
-    from ImageProcessing.ImgTools import load_img, show_img, resize_img, resize_bigger_to_smaller_img, img_col_similarity
+    from ImageProcessing.ImgTools import load_img, show_img, resize_img, resize_bigger_to_smaller_img, \
+        img_col_similarity
     # show_img(orig)
     #
     # res = resize_img(orig, 0.7, percent=True)
@@ -28,10 +30,8 @@ def main():
 
     # m.capture_on_two_click('open_gift_page', './PokemonGo/images/FriendGifting/')
     # m.capture_on_two_click('gift_received_profile', './PokemonGo/images/FriendGifting/')
-    #m.capture_on_two_click('can_send_gift_profile', './PokemonGo/images/FriendGifting/')
+    m.capture_on_two_click('can_send_gift_profile', './PokemonGo/images/FriendGifting/')
     time.sleep(100)
-
-
 
     # while True:
     #     m.test_image('./PokemonGo/images/FriendGifting/', 'can_send_gift_profile')

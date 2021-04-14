@@ -11,6 +11,7 @@ from CardPrototyping.card_ADB.viewer import AndroidViewer
 from CardPrototyping.GenericCard import GenericCardTemplate
 from ImageProcessing.ImgTools import resize_img, crop_img
 from settings import SCREEN_SCALE_FACTOR
+from settings import NOTiFICATION_BAR_RESCALE
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,
@@ -23,6 +24,7 @@ class ADBManager(GenericCardTemplate()):
         super().__init__()
         self.adjusted_resolution = None
         self.latest_frame = None
+        self.notif_bar_height = np.array([0, 0])
         logging.info('Bind methods generated')
         self.video_thread = None
         self.android = AndroidViewer()
@@ -43,9 +45,22 @@ class ADBManager(GenericCardTemplate()):
         # adb shell wm size reset
         # adb shell wm density resetpytho
         # adb shell wm size 1080x1920
-        self.adjusted_resolution = res
+
         self.exec_adb_command(f'wm size ' + 'x'.join(res.astype(str)))
+        if NOTiFICATION_BAR_RESCALE:
+            time.sleep(1)
+            notif_height = self.exec_adb_command(
+                "dumpsys window windows| sed -n '/Window .*StatusBar.*:/,/Window .*:/p'| grep 'Requested' |grep h")
+
+            h = int(notif_height.split('h=')[1].split(' ')[0])+1
+            print("CROPPING OUT NOTIF HEIGHT :")
+            print(h)
+            self.notif_bar_height = np.array([0, h])
+            self.exec_adb_command(f'wm size ' + 'x'.join((res + self.notif_bar_height).astype(str)))
+            time.sleep(5)
         time.sleep(2)
+
+        self.adjusted_resolution = res
 
     def reset_resolution(self):
         self.exec_adb_command('wm size reset')
@@ -54,7 +69,8 @@ class ADBManager(GenericCardTemplate()):
         self.exec_adb_command(f'settings put global policy_control immersive.full={app_ref}')
 
     def exec_adb_command(self, cmd):
-        os.popen(f'adb shell {cmd}')
+        r = os.popen(f'adb shell {cmd}')
+        return r.read()
 
     def do_mouse_event(self, x=0, y=0, flags=0, **kwargs):
 
@@ -111,6 +127,17 @@ class ADBManager(GenericCardTemplate()):
     def _swipe(self, start_x, start_y, end_x, end_y):
         self.android.swipe(start_x, start_y, end_x, end_y)
 
+    def _preprocess_frame(self, frame):
+        xy = np.array([0, 0])
+        wh = np.flip(frame.shape)[1:]
+        if NOTiFICATION_BAR_RESCALE:
+            xy = self.notif_bar_height
+        if self.adjusted_resolution is not None:
+            wh = self.adjusted_resolution
+        frame = crop_img(frame, *xy, *wh)
+        # print(frame.shape)
+        return frame
+
     def _special_opencv_thread(self, window):
         logging.info("Video starting on:" + str(window))
         cv2.namedWindow(window)
@@ -128,13 +155,12 @@ class ADBManager(GenericCardTemplate()):
 
             for frame in frames:
                 f += 1
-                if self.adjusted_resolution is not None:
-                    frame = crop_img(frame, 0, 0, *self.adjusted_resolution)
-                self.latest_frame = frame
+
+                self.latest_frame = self._preprocess_frame(frame)
 
                 self._update_dim(self.latest_frame)
                 self.do_frame_update(self.latest_frame)
-                cv2.imshow(window, resize_img(frame, self.scale_factor, True))
+                cv2.imshow(window, resize_img(self.latest_frame, self.scale_factor, True))
                 cv2.waitKey(1)
             if dt > 1:
                 f = 0

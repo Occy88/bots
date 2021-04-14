@@ -1,7 +1,8 @@
 from ImageProcessing.MLPictureGen import MLPictureGen
 # from ImageProcessing.ImgTools import img_col_similarity, crop_img
-# from CardPrototyping.card_ADB.instances_ADB import android_phone
+from CardPrototyping.card_ADB.instances_ADB import android_phone
 
+android_phone.set_resolution()
 import time
 
 
@@ -24,8 +25,7 @@ def main():
     # show_img(orig)
     # show_img(res)
     # print(img_col_similarity(orig,res))
-    from CardPrototyping.card_ADB.instances_ADB import android_phone
-    android_phone.set_resolution()
+
     m = MLPictureGen()
 
     # m.capture_on_two_click('open_gift_page', './PokemonGo/images/FriendGifting/')

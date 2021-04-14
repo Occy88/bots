@@ -216,6 +216,16 @@ def img_col_similarity(img1, img2):
     return 1 - err
 
 
+def update_img_from_details(img_update_from, img_name, path, format='.png'):
+    img = img_update_from
+
+    # show_img(img)
+
+    details = json.loads(open(path + img_name + '.json', 'r').read())
+    img = crop_img(img, *details['xy'], *details['wh'], details['as_percentage'])
+    save_img(img, img_name, format=format, path=path)
+
+
 def find_peaks(p_2d_arr, threshold):
     """
     Finds all the maximas which are above a threshold on a 2d probability plane.

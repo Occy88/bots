@@ -2,7 +2,7 @@
 SCREEN_SCALE_FACTOR = 0.5
 
 # 2. For adjusting rendering due to Notification bar (top) not completely removed
-NOTiFICATION_BAR_RESCALE = True
+NOTiFICATION_BAR_RESCALE = False
 
 
 
